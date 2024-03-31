@@ -10,8 +10,5 @@ int main (void)
 
     area1 = pow(x, 2) * PI;
     raio2 = sqrt(((area1/2)/PI));
-
-
-
     printf ("%.2f %.2f\n", area1, raio2);
 }
