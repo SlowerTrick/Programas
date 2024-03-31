@@ -2,4 +2,5 @@
     "files.associations": {
         "stdio.h": "c"
     }
+    "editor.renderLineHighlight": "gutter"
 }

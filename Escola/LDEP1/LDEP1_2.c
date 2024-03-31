@@ -12,17 +12,17 @@ int main(int argc, char const *argv[])
     	printf("vc nao pode votar!\n");
     }
     
-    if(idade > 16 && idade <= 18) 
+    else if(idade >= 16 && idade < 18) 
     {
     	printf("vc pode votar, mas nao eh obrigado!\n");
     }
     
-    if(idade >= 18 && idade <= 65) 
+    else if(idade >= 18 && idade < 65) 
     {
     	printf("vc eh obrigado a votar!\n");
     }
     
-    if(idade >= 65) 
+    else if(idade >= 65) 
     {
     	printf("vc pode votar, mas nao eh obrigado!\n");
     }
