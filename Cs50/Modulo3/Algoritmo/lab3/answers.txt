@@ -1,0 +1,14 @@
+sort1 uses: Bubble sort
+
+How do you know?: Ele é o mais eficiente na "odenação" de numeros previamente já ordenados, ele tem a velocidade
+semalhante ao sistema de marge sorte nesse tipo de classificação, e o seu limite inferior e superior possuem uma grande
+discrepância
+
+sort2 uses: Marge sort
+
+How do you know?: Ele é o mais eficiente na ordenação de numeros aleatórios.
+
+sort3 uses: Selection sort
+
+How do you know?: O seu limite superior e inferior (quase) não possui diferença em relação aos diferente tipos de
+ordenação com o mesmo número de números.
