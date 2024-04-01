@@ -12,6 +12,8 @@ int main()
   int verificador1 = 0;
   int verificador2 = 0;
   int verificador3 = 0;
+
+  
  
 
   scanf("%i", &qtd);
