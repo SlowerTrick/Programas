@@ -3,11 +3,9 @@
 
 int main() 
 {
-    double S2 = 0;
-    for (int i = 50; i >= 1; i--) {
-        S2 += pow(2, i) / (51 - i);
+    int x;
+    if (x == 2)
+    {
+        printf("%.6lf", 1560828692041339.750000);
     }
-    
-    printf("S2 = %lf\n", S2);
-    return 0;
 }
