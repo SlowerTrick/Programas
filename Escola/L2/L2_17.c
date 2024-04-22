@@ -1,46 +1,38 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <ctype.h>
-#include <string.h>
-
-void codificar(char *texto, int chave) {
-    int i = 0;
-    while (texto[i] != '.') {
-        if (islower(texto[i])) {
-            texto[i] = 'a' + (texto[i] - 'a' + chave) % 26;
-        }
-        i++;
-    }
-}
-
-void decodificar(char *texto, int chave) {
-    int i = 0;
-    while (texto[i] != '.') {
-        if (islower(texto[i])) {
-            texto[i] = 'a' + (texto[i] - 'a' - chave + 26) % 26;
-        }
-        i++;
-    }
-}
 
 int main() {
     int modo, chave;
-    char texto[1000];
+    char caracter;
 
-    scanf("%d %d ", &modo, &chave);
-    fgets(texto, sizeof(texto), stdin);
+    scanf("%d %d", &modo, &chave);
 
-    texto[strlen(texto) - 1] = '\0'; // Remover o caractere de nova linha do final da entrada
+    // Consumir qualquer caractere de espaço em branco ou de quebra de linha remanescente no buffer de entrada
+    getchar();
 
-    if (modo == 1) {
-        codificar(texto, chave);
-        printf("%s", texto);
-    } else if (modo == 2) {
-        decodificar(texto, chave);
-        printf("%s", texto);
-    } else {
+    // Verifica se o modo é válido
+    if (modo != 1 && modo != 2) {
         printf("Operacao invalida.");
+        return 0; // Encerra o programa
     }
+
+    while ((caracter = getchar()) != '.') {
+        if (islower(caracter)) {
+            if (modo == 1) { // Codificar
+                caracter = ((caracter - 'a' + chave) % 26) + 'a';
+            } else if (modo == 2) { // Decodificar
+                caracter = ((caracter - 'a' - chave + 26) % 26) + 'a';
+            }
+        } else if (!isspace(caracter) && !ispunct(caracter)) { // Não-alfabético
+            // Caracteres não alfabéticos não devem ser codificados
+            // e devem ser impressos sem modificação.
+            printf("%c", caracter);
+            continue;
+        }
+        printf("%c", caracter);
+    }
+
+    printf(".");
 
     return 0;
 }

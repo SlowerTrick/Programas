@@ -1,0 +1,26 @@
+Atleta: 1, Delegacao: 1, Genero: M, Nota1: 5, Nota2: 4, Nota3: 3
+Atleta: 2, Delegacao: 1, Genero: F, Nota1: 9, Nota2: 7, Nota3: 3
+Atleta: 3, Delegacao: 1, Genero: M, Nota1: 9, Nota2: 8, Nota3: 7
+Atleta: 4, Delegacao: 1, Genero: F, Nota1: 10, Nota2: 8, Nota3: 6
+Atleta: 1, Delegacao: 2, Genero: M, Nota1: 9, Nota2: 8, Nota3: 2
+Atleta: 2, Delegacao: 2, Genero: F, Nota1: 10, Nota2: 10, Nota3: 8
+Atleta: 3, Delegacao: 2, Genero: M, Nota1: 8, Nota2: 8, Nota3: 8
+Atleta: 4, Delegacao: 2, Genero: F, Nota1: 7, Nota2: 6, Nota3: 6
+
+MELHORES ATLETAS DA DELEGACAO 1
+Melhor nota atual na iteracao 1: 5
+Melhor nota atual na iteracao 3: 9
+
+Melhor nota masculina da delegação 1: 9
+Atletas com a melhor nota pelo contador 1: 1
+MASCULINO: 3 
+Meu contador: contador 1
+
+MELHORES ATLETAS DA DELEGACAO 2
+Melhor nota atual na iteracao 5: 9
+
+Melhor nota masculina da delegação 2: 9
+Atletas com a melhor nota pelo contador 1: 1
+MASCULINO: 1 
+Meu contador: contador 1
+
