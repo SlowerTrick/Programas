@@ -1,38 +1,76 @@
 #include <stdio.h>
-#include <ctype.h>
 
-int main() {
-    int modo, chave;
-    char caracter;
-
-    scanf("%d %d", &modo, &chave);
-
-    // Consumir qualquer caractere de espaço em branco ou de quebra de linha remanescente no buffer de entrada
+int main (void)
+{
+    int opcao = 0, codigo = 0, i = 0;
+    scanf("%i%i", &opcao, &codigo);
     getchar();
+    
+    char c = 0;
+    codigo = codigo % 26; // Garante que o código esteja no intervalo de 0 a 25
 
-    // Verifica se o modo é válido
-    if (modo != 1 && modo != 2) {
-        printf("Operacao invalida.");
-        return 0; // Encerra o programa
-    }
-
-    while ((caracter = getchar()) != '.') {
-        if (islower(caracter)) {
-            if (modo == 1) { // Codificar
-                caracter = ((caracter - 'a' + chave) % 26) + 'a';
-            } else if (modo == 2) { // Decodificar
-                caracter = ((caracter - 'a' - chave + 26) % 26) + 'a';
+    if(opcao == 1)
+    {
+        while (scanf("%c", &c) != EOF)
+        {
+            if (c == '.')
+            {
+                printf (".");
+                break;
             }
-        } else if (!isspace(caracter) && !ispunct(caracter)) { // Não-alfabético
-            // Caracteres não alfabéticos não devem ser codificados
-            // e devem ser impressos sem modificação.
-            printf("%c", caracter);
-            continue;
+
+            if (c >= 'a' && c <= 'z')
+            {
+                c += codigo;
+                if (c > 'z')
+                {
+                    c = 'a' + (c - 'z') - 1;
+                    printf ("%c", c);
+                }
+                else
+                {
+                    printf ("%c", c);
+                }
+            } 
+            else
+            {
+                printf ("%c", c);
+            }
         }
-        printf("%c", caracter);
     }
 
-    printf(".");
+    else if (opcao == 2)
+    {
+        while (scanf("%c", &c) != EOF)
+        {
+            if (c == '.')
+            {
+                printf (".");
+                break;
+            }
+            if (c >= 'a' && c <= 'z')
+            {
+                c -= codigo;
+                if (c < 'a')
+                {
+                    c = 'z' - ('a' - c) + 1;
+                    printf ("%c", c);
+                }
+                else
+                {
+                    printf ("%c", c);
+                }
+            } 
+            else
+            {
+                printf ("%c", c);
+            }
+        }
+    }
 
+    else
+    {
+        printf("Operacao invalida.");
+    }
     return 0;
 }

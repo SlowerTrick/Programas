@@ -2,12 +2,17 @@
 #include <stdlib.h>
 #include <time.h>
 #include <ctype.h>
+#include <stdbool.h>
+#include <locale.h>
 
 bool numeroinvalido1 (int random, int minimo, int maximo);
 bool numeroinvalido2 (int valor, int random, int numerosSalvos[]);
 
-int main (int argc, string argv[])
+int main (int argc, char* argv[])
 {
+
+    setlocale(LC_ALL, "Portuguese_Brazil");
+
     if (argc != 2)
     {
         printf ("Uso correto: ./sorteador ('1' para sorteio de números aleatorios e '2' para sorteio com multiplos participantes)\n");
@@ -37,7 +42,8 @@ int main (int argc, string argv[])
         int min, max, aleatorio, Nnumeros;
         do
         {
-            Nnumeros = get_int ("Número de valores sorteados: ");
+            printf ("Número de valores sorteados: ");
+            scanf("%i", &Nnumeros);
             if (Nnumeros == 0 || Nnumeros < 0)
             {
                 printf ("A quantidade de sorteios tem que ser maior do que 0\n");
@@ -49,8 +55,11 @@ int main (int argc, string argv[])
 
         do
         {
-            min = get_int ("Valor mínimo: ");
-            max = get_int ("Valor máximo: ");
+            printf ("Valor mínimo");
+            scanf("%i", &min);
+            printf ("Valor máximo");
+            scanf("%i", &max);
+
             if (max < min)
             {
                 printf ("O minimo de valores tem que ser menor que o máximo\n");
@@ -77,7 +86,9 @@ int main (int argc, string argv[])
     {
         srand(time(NULL));
         int aleatorio;
-        int Nnumeros = get_int ("Número de participantes do sorteio: ");
+        int Nnumeros = 0;
+        printf ("Número de participantes do sorteio: ");
+        scanf("%i", &Nnumeros);
         int resultados[Nnumeros];
 
         for (int i = 0; i < Nnumeros; i++)
