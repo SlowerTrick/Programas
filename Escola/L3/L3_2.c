@@ -5,38 +5,49 @@ float Subtracao(float num1, float num2);
 float Divisao(float num1, float num2);
 float Multiplicacao(float num1, float num2);
 
-int main()
+int main(void)
 {
-    float num1 = 0, num2 = 0, num3 = 0, infinito = 0;
+    float num1 = 0, num2 = 0, resultado = 0, extra = 1;
     char operacao = 0;
-    float result = 0;
- 
-    scanf ("%f %f %c", &num1, &num2, &operacao);    
 
-    while (infinito == 0)
+    scanf("%f%f %c", &num1, &num2, &operacao);
+    if (operacao == '+')
+    {
+        resultado = Soma(num1, num2);
+    }
+    if (operacao == '-')
+    {
+        resultado = Subtracao(num1, num2);
+    }
+    if (operacao == '*')
+    {
+        resultado = Multiplicacao(num1, num2);
+    }
+    if (operacao == '/')
+    {
+        resultado = Divisao(num1, num2);
+    }
+
+    while (scanf("%f %c", &extra, &operacao) != EOF)
     {
         if (operacao == '+')
         {
-            result = Soma(num1, num2);
+            resultado = Soma(resultado, extra);
         }
-        else if (operacao == '-')
+        if (operacao == '-')
         {
-            result = Subtracao(num1, num2);
+            resultado = Subtracao(resultado, extra);
         }
-        else if (operacao == '/')
+        if (operacao == '*')
         {
-            result = Divisao(num1, num2);
+            resultado = Multiplicacao(resultado, extra);
         }
-        else if (operacao == '*')
+        if (operacao == '/')
         {
-            result = Multiplicacao(num1, num2);
+            resultado = Divisao(resultado, extra);
         }
-
-        fgets()
-
-        printf ("%.2f", result);
-        break;
     }
+    printf ("%.2f", resultado);
 
     return 0; 
 }

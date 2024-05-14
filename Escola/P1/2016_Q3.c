@@ -1,28 +1,33 @@
 #include <stdio.h>
 #include <ctype.h>
 
-int is_vowel(char c) {
-    return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
-}
+int main (void)
+{
+    char primeiro = 0, segundo = 0, terceiro = 0, quarto = 0;
+    scanf ("%c%c%c%c", &primeiro, &segundo, &terceiro, &quarto);
 
-int is_consonant(char c) {
-    return isalpha(c) && !is_vowel(c);
-}
-
-int main() {
-    char codigo[5];
-    int i;
-
-    scanf("%s", codigo);
-
-    if (isupper((unsigned char)codigo[0]) && isdigit((unsigned char)codigo[1]) && is_vowel(codigo[2]) && is_consonant(codigo[3]) && islower((unsigned char)codigo[3])) {
-        for(i = 0; i < 4; i++) {
-            codigo[i] = toupper((unsigned char)codigo[i]);
-        }
-        printf("%s\n", codigo);
-    } else {
-        printf("Invalido\n");
+    if (!isupper(primeiro))
+    {
+        printf ("Invalido");
+        return 1;
+    }
+    if (!isdigit(segundo))
+    {
+        printf ("Invalido"); 
+        return 1;
+    }
+    if (!(terceiro == 'a' || terceiro == 'A' || terceiro == 'e' || terceiro == 'E' || terceiro == 'i' || terceiro == 'I' || terceiro == 'o' || terceiro == 'O' || terceiro == 'u' || terceiro == 'U'))
+    {
+        printf ("Invalido"); 
+        return 1;
     }
 
+    if (!(quarto == 'b' || quarto == 'c' || quarto == 'd' || quarto == 'f' || quarto == 'g' || quarto == 'h' || quarto == 'j' || quarto == 'k' || quarto == 'l' || quarto == 'm' || quarto == 'n' || quarto == 'p' || quarto == 'q' || quarto == 'r' || quarto == 's' || quarto == 't' || quarto == 'v' || quarto == 'w' || quarto == 'x' || quarto == 'y' || quarto == 'z'))
+    {
+        printf("Invalido");
+        return 1;
+    }
+
+    printf ("%c%c%c%c", toupper(primeiro), segundo, toupper(terceiro), toupper(quarto));
     return 0;
 }

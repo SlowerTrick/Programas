@@ -4,7 +4,9 @@
         "cs50.h": "c",
         "stdlib.h": "c",
         "ctype.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "limits": "c",
+        "test_2": "c"
     },
     "editor.fontFamily": "JetBrains Mono",
     "editor.fontSize": 14,

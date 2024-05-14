@@ -46,7 +46,7 @@ int main (void)
                 }
                 somatorioM += nota1;
 
-                if (nota1 > melhornotaM1)
+                if (nota1 > melhornotaM1 || (nota1 == melhornotaM1 && nota2 > melhornotaM2) || (nota1 == melhornotaM1 && nota2 == melhornotaM2 && nota3 > melhornotaM3))
                 {
                     melhornotaM1 = nota1;
                     melhornotaM2 = nota2;
@@ -54,58 +54,14 @@ int main (void)
                     melhorMasculino = index;
                 }
 
-                if (nota1 == melhornotaM1)
-                {
-                    if (nota2 > melhornotaM2)
-                    {
-                        melhornotaM1 = nota1;
-                        melhornotaM2 = nota2;
-                        melhorMasculino = index;
-                    }
-                }
-
-                if (nota1 == melhornotaM1 && nota2 == melhornotaM2)
-                {
-                    if (nota3 > melhornotaM3)
-                    {
-                        melhornotaM1 = nota1;
-                        melhornotaM2 = nota2;
-                        melhornotaM3 = nota3;
-                        melhorMasculino = index;
-                    }
-                }
-                //Pior nota
-                if (nota1 < piornotaM1)
+                if (nota1 < piornotaM1 || (nota1 == piornotaM1 && nota2 < piornotaM2) || (nota1 == piornotaM1 && nota2 == piornotaM2 && nota3 < piornotaM3) || (nota1 == piornotaM1 && nota2 == piornotaM2 && nota3 == piornotaM3 && index > piorMasculino))
                 {
                     piornotaM1 = nota1;
                     piornotaM2 = nota2;
                     piornotaM3 = nota3;
                     piorMasculino = index;
                 }
-                else if (nota1 == piornotaM1)
-                {
-                    if (nota2 < piornotaM2)
-                    {
-                        piornotaM2 = nota2;
-                        piorMasculino = index;
-                    }
-                    else if (nota2 == piornotaM2)
-                    {
-                        if (nota3 < piornotaM3)
-                        {
-                            piornotaM3 = nota3;
-                            piorMasculino = index;
-                        }
-                        else if (nota3 == piornotaM3)
-                        {
-                            if (index > piorMasculino)
-                            {
-                                piorMasculino = index;
-                            }
-                        }
-                    }
-                }
-            }
+            }   
 
             if (genero == 'F')
             {
@@ -128,7 +84,7 @@ int main (void)
                 }
                 somatorioF += nota1;
 
-                if (nota1 > melhornotaF1)
+                if (nota1 > melhornotaF1 || (nota1 == melhornotaF1 && nota2 > melhornotaF2) || (nota1 == melhornotaF1 && nota2 == melhornotaF2 && nota3 > melhornotaF3))
                 {
                     melhornotaF1 = nota1;
                     melhornotaF2 = nota2;
@@ -136,55 +92,12 @@ int main (void)
                     melhorFeminino = index;
                 }
 
-                if (nota1 == melhornotaF1)
-                {
-                    if (nota2 > melhornotaF2)
-                    {
-                        melhornotaF1 = nota1;
-                        melhornotaF2 = nota2;
-                        melhorFeminino = index;
-                    }
-                }
-
-                if (nota1 == melhornotaF1 && nota2 == melhornotaF2)
-                {
-                    if (nota3 > melhornotaF3)
-                    {
-                        melhornotaF1 = nota1;
-                        melhornotaF2 = nota2;
-                        melhornotaF3 = nota3;
-                        melhorFeminino = index;
-                    }
-                }
-                if (nota1 < piornotaF1)
+                if (nota1 < piornotaF1 || (nota1 == piornotaF1 && nota2 < piornotaF2) || (nota1 == piornotaF1 && nota2 == piornotaF2 && nota3 < piornotaF3) || (nota1 == piornotaF1 && nota2 == piornotaF2 && nota3 == piornotaF3 && index > piorFeminino))
                 {
                     piornotaF1 = nota1;
                     piornotaF2 = nota2;
                     piornotaF3 = nota3;
                     piorFeminino = index;
-                }
-                else if (nota1 == piornotaF1)
-                {
-                    if (nota2 < piornotaF2)
-                    {
-                        piornotaF2 = nota2;
-                        piorFeminino = index;
-                    }
-                    else if (nota2 == piornotaF2)
-                    {
-                        if (nota3 < piornotaF3)
-                        {
-                            piornotaF3 = nota3;
-                            piorFeminino = index;
-                        }
-                        else if (nota3 == piornotaF3)
-                        {
-                            if (index > piorFeminino)
-                            {
-                                piorFeminino = index;
-                            }
-                        }
-                    }
                 }
             }
         }

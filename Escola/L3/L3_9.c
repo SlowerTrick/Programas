@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <math.h>
 
 int verificapH(float pH);
 int verificaGotaChuvaAcida(float pH);
@@ -9,28 +11,107 @@ void imprimeResultadosAnalise(float porcentagemGotasChuvaAcida, float porcentage
 int main (void)
 {
     int area = 0, densidade = 0, tempo = 0;
-    float p = 0;
+    int gotasacidas = 0, gotasbasicas = 0, gotasneutras = 0;
+    float gota = 0;
+    float pHmaisacido = 10, pHmaisbasico = 7, pHmaisneutro = 10;
+    int chuvaacida = 0, chuvabasica = 0, totalgotas = 0;
         
     scanf ("%i%i%i", &area, &densidade, &tempo);
 
-    while (scanf("%f", &p) != EOF)
+    while (scanf("%f", &gota) != EOF)
     {
-        
+        int pH = verificapH(gota);
+
+        if (fabs(7 - gota) < fabs(7 - pHmaisneutro))
+        {
+            pHmaisneutro = gota;
+        }
+
+        if (pH == 0)
+        {
+            gotasneutras++;
+            totalgotas++;
+        }
+        else if (pH == 1)
+        {
+            if (gota < pHmaisacido)
+            {
+                pHmaisacido = gota;
+            }
+            gotasacidas++;
+            totalgotas++;
+            if (verificaGotaChuvaAcida(gota))
+            {
+                chuvaacida++;
+            }
+        }
+        else if (pH == 2)
+        {
+            if (gota > pHmaisbasico)
+            {
+                pHmaisbasico = gota;
+            }
+            gotasbasicas++;
+            totalgotas++;
+        }
+        if (!verificaGotaChuvaAcida(gota))
+        {
+                chuvabasica++;
+         }
+    }
+    if (gotasacidas == 0 && gotasbasicas == 0 && gotasneutras == 0)
+    {
+        printf ("Nenhuma gota foi avaliada");
+        return 0;
+    }
+    else
+    {
+        printf ("%i %i %i %.2f %.2f %.2f\n", gotasacidas, gotasbasicas, gotasneutras, pHmaisacido, pHmaisbasico, pHmaisneutro);
     }
 
+    if ((float)chuvaacida / totalgotas >= 0.75)
+    {
+        printf ("Chuva Acida ");
+        printf ("%.2f%% ", ((float) chuvaacida * 100) / totalgotas);
+        printf ("%.2f%%", ((float) chuvabasica * 100) / totalgotas);
+    }
+    else if (((float)chuvabasica / totalgotas >= 0.75))
+    {
+        printf ("Chuva Normal ");
+        printf ("%.2f%% ", ((float) chuvaacida * 100) / totalgotas);
+        printf ("%.2f%%", ((float) chuvabasica * 100) / totalgotas);
+    }
+    else
+    {
+        printf ("Chuva com indicios de chuva acida ");
+        printf ("%.2f%% ", ((float) chuvaacida * 100) / totalgotas);
+        printf ("%.2f%%", ((float) chuvabasica * 100) / totalgotas);
+    }
     return 0;
 }
 
 int verificapH(float pH)
 {
-    return 0;
-    return 1;
-    return 2;
+    if (pH == 7)
+    {
+        return 0;
+    }
+    else if (pH < 7)
+    {
+        return 1;
+    }
+    else if (pH > 7)
+    {
+        return 2;
+    }
 }
 
 int verificaGotaChuvaAcida(float pH)
 {
-    return true;
+    if (pH < 5.7)
+    {
+        return true;
+    }
     return false;
 }
 
