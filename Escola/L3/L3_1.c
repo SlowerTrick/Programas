@@ -9,7 +9,8 @@ int main()
 {
     float num1, num2;
 
-    while (scanf("%f %f", &num1, &num2) == 2 ){
+    while (scanf("%f %f", &num1, &num2) == 2 )
+    {
         float result;
         result = Soma(num1, num2);
         printf("%.2f", result);
@@ -20,6 +21,7 @@ int main()
         result = Multiplicacao(num1, num2);
         printf(" %.2f\n", result);
     }
+
     return 0; 
 }
 

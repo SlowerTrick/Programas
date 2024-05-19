@@ -54,11 +54,13 @@ int main (void)
             gotasbasicas++;
             totalgotas++;
         }
+
         if (!verificaGotaChuvaAcida(gota))
         {
                 chuvabasica++;
-         }
+        }
     }
+    
     if (gotasacidas == 0 && gotasbasicas == 0 && gotasneutras == 0)
     {
         printf ("Nenhuma gota foi avaliada");

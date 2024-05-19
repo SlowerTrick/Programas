@@ -1,94 +1,77 @@
 #include <stdio.h>
 
-typedef struct
-{
+typedef struct {
     int codigo;
     float preco;
     int estoque;
-}
-tProduto;
-
-tProduto produto;
-tProduto produtoanterior;
-tProduto menor;
-tProduto maior;
+} tProduto;
 
 tProduto LeProduto();
 int EhProduto1MaiorQ2(tProduto p1, tProduto p2);
 int EhProduto1MenorQ2(tProduto p1, tProduto p2);
 int TemProdutoEmEstoque(tProduto p);
-void ImprimeProduto(tProduto p);
+void ImprimeProduto(tProduto p, char* tipo);
 
-int main (void)
-{
-    int totalprodutos = 0, i = 0, maiorpreco = 0, menorpreco = 0;
-    scanf ("%i", &totalprodutos);
+int main(void) {
+    int totalprodutos = 0, i = 0;
+    tProduto produto, maior, menor;
+    maior.preco = -1; // Inicializa com um valor inválido
+    menor.preco = __FLT_MAX__; // Inicializa com o maior valor possível
 
-    for (i = 0; i < totalprodutos; i++)
+    scanf("%i", &totalprodutos);
+    getchar(); // Consome o newline após o número
+
+    for (i = 0; i < totalprodutos; i++) 
     {
-        if (i > 0)
-        {
-            produtoanterior = produto;
-        }
         produto = LeProduto();
-        if (!TemProdutoEmEstoque(produto))
-        {
-            printf ("FALTA:COD %i, PRE %.2f, QTD 0\n", produto.codigo, produto.preco);
+
+        if (!TemProdutoEmEstoque(produto)) {
+            printf("FALTA:COD %i, PRE %.2f, QTD 0\n", produto.codigo, produto.preco);
         }
-        if (i > 0)
-        {
-            maior.preco = EhProduto1MaiorQ2(produto, produtoanterior);
-            menor.preco = EhProduto1MenorQ2(produto, produtoanterior);
+
+        if (maior.preco == -1 || EhProduto1MaiorQ2(produto, maior)) {
+            maior = produto;
+        }
+
+        if (menor.preco == __FLT_MAX__ || EhProduto1MenorQ2(produto, menor)) {
+            menor = produto;
         }
     }
-    printf ("MAIOR:COD %i, PRE %.2f, QTD %i\n", maior.codigo, maior.preco, maior.codigo);
-    printf ("MENOR:COD %i, PRE %.2f, QTD %i\n", menor.codigo, menor.preco, menor.codigo);
+
+    if (maior.preco != -1) {
+        ImprimeProduto(maior, "MAIOR");
+    }
+    if (menor.preco != __FLT_MAX__) {
+        ImprimeProduto(menor, "MENOR");
+    }
+
     return 0;
 }
 
-tProduto LeProduto()
+tProduto LeProduto() 
 {
     tProduto produto;
     scanf("%i;%f;%i", &produto.codigo, &produto.preco, &produto.estoque);
+    getchar(); // Consome o newline após o produto
     return produto;
 }
 
-int TemProdutoEmEstoque(tProduto p)
+int TemProdutoEmEstoque(tProduto p) 
 {
-    if (p.estoque == 0)
-    {
-        return 0;
-    }
-    else
-    {
-        return 1;
-    }
+    return p.estoque > 0;
 }
 
-int EhProduto1MaiorQ2(tProduto p1, tProduto p2)
+int EhProduto1MaiorQ2(tProduto p1, tProduto p2) 
 {
-    if (p1.preco > p2.preco)
-    {
-        maior = p1;
-        return p1.preco;
-    }
-    else
-    {
-        maior = p2;
-        return p2.preco;
-    }
+    return p1.preco > p2.preco;
 }
 
-int EhProduto1MenorQ2(tProduto p1, tProduto p2)
+int EhProduto1MenorQ2(tProduto p1, tProduto p2) 
 {
-    if (p1.preco < p2.preco)
-    {
-        menor = p1;
-        return p1.preco;
-    }
-    else
-    {
-        menor = p2;
-        return p2.preco;
-    }
+    return p1.preco < p2.preco;
+}
+
+void ImprimeProduto(tProduto p, char* tipo) 
+{
+    printf("%s:COD %i, PRE %.2f, QTD %i\n", tipo, p.codigo, p.preco, p.estoque);
 }
