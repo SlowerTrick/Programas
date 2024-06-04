@@ -279,7 +279,7 @@ Ginasio RealizaBatalha(Ginasio ginasio)
             }
         }
         ginasio.qtdDeAdversarios--;
-        if (ginasio.adversario.nivel > ginasio.diogo.nivel && venceu == 1)
+        if (menorNivel(ginasio.diogo, ginasio.adversario) && venceu == 1)
         {
             ginasio.diogo = subirDeNivel(ginasio.diogo);
         }
