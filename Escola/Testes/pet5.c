@@ -29,29 +29,12 @@ int calculaDano(Pokemon atacante, Pokemon defensor);
 int estaVivo(Pokemon p);
 int menorNivel(Pokemon atacante, Pokemon defensor);
 Pokemon subirDeNivel(Pokemon p);
-
 Ginasio batalhar(Pokemon atacante, Pokemon defensor, Ginasio ginasio);
-/*
-funcao que recebe o pokemon atacante, defensor e o ginasio.
-Aqui que a batalha eh efetuada
-a batalha continua ateh que alguem morra
-no final, atribua defensor e atacante ao ginasio
-retorna ginasio atualizado
-obs1: o pokemon de maior velocidade ataca primeiro
-*/
 Pokemon lePokemon();
 void imprimePokemon(Pokemon p);
 Ginasio inicializaGinasio();
-
 Ginasio RealizaBatalha(Ginasio ginasio);
-/*
-Recebe o ginasio inicializado e efetua as batalhas ate que diogo venca ou perca
-retorna ginasio atualizado
-*/
 void FinalizaBatalha(Ginasio ginasio);
-/*
-Imprime todas as informacoes da batalhas, especificadas no enunciado e casos de teste
-*/
 
 int main()
 {
@@ -248,7 +231,7 @@ void imprimePokemon(Pokemon p)
     printf("Nome: %c\n", p.nome);
     printf("Tipo: %c\n", p.tipo);
     printf("Nivel: %i\n", p.nivel);
-    printf("VidaMax: %i\n", p.vidaMaxima);
+    printf("VidaMax: %i \n", p.vidaMaxima);
     printf("VidaAtual: %i\n", p.vidaAtual);
     printf("Ataque: %i\n", p.ataque);
     printf("Defesa: %i\n", p.defesa);
@@ -319,7 +302,7 @@ void FinalizaBatalha(Ginasio ginasio)
     }
     else
     {
-        printf("Diogo perdeu na %i batalha!\n", ginasio.qtdDeAdversarios);
+        printf("Diogo perdeu na %i batalha!\n", ginasio.totalbatalhas - ginasio.qtdDeAdversarios);
         printf("Ultimo Pokemon adversario:\n");
         imprimePokemon(ginasio.adversario);
     }
