@@ -7,6 +7,9 @@
     "editor.scrollbar.horizontal": "hidden",
     "editor.scrollbar.vertical": "hidden",
     "explorer.compactFolders": false,
+    "files.associations": {
+        "stdio.h": "c"
+    },
 }
 
 

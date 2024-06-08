@@ -61,6 +61,10 @@ textoY = 10
 fonte_game_over = pygame.font.Font ('Assets/robotomono-bold.ttf', 64)
 som_game_over = True
 
+# Stage Clear 
+fonte_stage_clear = pygame.font.Font ('Assets/robotomono-bold.ttf', 64)
+som_stage_clear = True
+
 # Funções para o funcionamento do programa
 def player(x, y):
     screen.blit(playerImg, (x, y)) # "blit" desenha uma imagem na tela
@@ -97,7 +101,23 @@ def game_over():
     playerY = 3000
     global playerX
     playerX = 3000
-    screen.blit(texto_fim_de_jogo, (235, 250)) # "blit" desenha uma imagem na tela
+    screen.blit(texto_fim_de_jogo, (250, 250)) # "blit" desenha uma imagem na tela
+
+def stage_clear():
+    global som_stage_clear
+    mixer.music.unload ()
+    if som_stage_clear == True:
+        Som_SC = mixer.Sound('Assets/StageClear.mp3')
+        Som_SC.play()
+        som_stage_clear = False
+    texto_fim_de_jogo = fonte_stage_clear.render("VITÓRIA!", True, (255, 255, 255))
+    for j in range(numInimigos):
+        inimigoY[j] = 2000
+    global playerY
+    playerY = 3000
+    global playerX
+    playerX = 3000
+    screen.blit(texto_fim_de_jogo, (255, 250)) # "blit" desenha uma imagem na tela
 
 # Rodar o jogo
 running = True
@@ -216,5 +236,21 @@ while running:
     if not colisao_player: 
         player(playerX, playerY) # Movimentar o player
 
+    if pontuacao == 20:
+        running == False
+        break
+
     mostrarPontuacao (textoX , textoY) # Mostrar pontuação
+    pygame.display.update() # Atualiza a tela do jogo (Linha importante)
+
+running = True
+while running:
+    screen.fill((0, 0, 0)) # Alterar o fundo com base em RGB (Tem que ficar a cima, caso outros elementos tenham que aparecer)
+    screen.blit(background, (0, 0))
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT: # Fechar o jogo caso o botão de fechar seja apertado
+            running = False
+
+    stage_clear()
     pygame.display.update() # Atualiza a tela do jogo (Linha importante)
