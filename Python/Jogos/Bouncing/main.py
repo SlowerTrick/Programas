@@ -1,5 +1,4 @@
 import pygame
-from pygame import mixer
 import os
 import random
 
@@ -9,10 +8,12 @@ pygame.init()
 # Informações do monitor do usuario
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 info = pygame.display.Info()
-screen_width, screen_height = info.current_w, info.current_h
+SCREEN_WIDTH, SCREEN_HEIGHT = info.current_w, info.current_h
+SCREEN_WIDTH_OFFSET = 100
+SCREEN_HEIGHT_OFFSET = 170
 
 # Inicializa a tela
-screen = pygame.display.set_mode((screen_width, screen_height - 50), pygame.RESIZABLE)
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT - 50), pygame.RESIZABLE)
 
 # Titulo e Icone
 pygame.display.set_caption("Bouncing")
@@ -40,42 +41,58 @@ cores = {
 }
 
 # Cubo
-cuboX = random.randint(0, screen_width - 100)
-cuboY = random.randint(0, screen_height - 170)
-cuboXalteracao = 8
-cuboYalteracao = 8
-cuboAtual = "cinza"
-corAnterior = 0
+quantidadeCubos = 1
+cubos = []
+
+# Numeros acessórios de Cubo
+INDEX_PRIMEIRA_TECLA = 48
 
 # Posição do Player
-def player(x, y):
-    screen.blit(cores[cuboAtual], (x, y))
+def player(cuboAtual, x, y):
+    screen.blit(cores[cubos[cuboAtual]["cuboCor"]], (x, y))
+
+# Adiciona Mais cubos
+def adicionaCubos(qtdCubos):
+    for i in range(qtdCubos):
+        cubo = {
+            "cuboAtual": "cinza",
+            "cuboX": random.randint(1, SCREEN_WIDTH - SCREEN_WIDTH_OFFSET),
+            "cuboY": random.randint(1, SCREEN_HEIGHT - SCREEN_HEIGHT_OFFSET),
+            "cuboXalteracao": random.randint(1, 15),
+            "cuboYalteracao": random.randint(1, 15),
+            "cuboCor": "cinza",
+            "corAnterior": 0
+        }
+        cubos.append(cubo)
+
+# Cria os cubos inciais
+adicionaCubos(quantidadeCubos)
 
 # Colisão
 def colisao(modo, x, y):
     if modo == 'x':
         if x <= 0:
             return -1
-        if x >= screen_width - 100:
+        if x >= SCREEN_WIDTH - SCREEN_WIDTH_OFFSET:
             return -1
     elif modo == 'y':
         if y <= 0:
             return -1
-        if y >= screen_height - 170:
+        if y >= SCREEN_HEIGHT - SCREEN_HEIGHT_OFFSET:
             return -1
     return 1
 
 def alteraCorCubo(cuboAtual):
-    global corAnterior
-    cor = corAnterior
+    cor = cubos[cuboAtual]["corAnterior"]
 
-    while corAnterior == cor:
+    while cubos[cuboAtual]["corAnterior"] == cor:
         cor = random.randint(1, 11)
 
-    cuboAtual = list(cores.keys())[cor]
-    corAnterior = cor
+    cubos[cuboAtual]["cuboCor"] = list(cores.keys())[cor]
+    cubos[cuboAtual]["corAnterior"] = cor
 
-    return cuboAtual
+def EhTeclaValida(tecla):
+    return INDEX_PRIMEIRA_TECLA <= tecla <= INDEX_PRIMEIRA_TECLA + 9
 
 # Loop principal
 running = True
@@ -87,16 +104,23 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    colisaoX = colisao('x', cuboX, cuboY)
-    colisaoY = colisao('y', cuboX, cuboY)
-    cuboXalteracao = colisaoX * cuboXalteracao
-    cuboYalteracao = colisaoY * cuboYalteracao
+        if event.type == pygame.KEYDOWN:
+            if EhTeclaValida(event.key):
+                quantidadeCubos = event.key - INDEX_PRIMEIRA_TECLA
+                adicionaCubos(quantidadeCubos)
 
-    if colisaoX == -1 or colisaoY == -1:
-        cuboAtual = alteraCorCubo(cuboAtual)
+    for i in range(quantidadeCubos):
+        colisaoX = colisao('x', cubos[i]["cuboX"], cubos[i]["cuboY"])
+        colisaoY = colisao('y', cubos[i]["cuboX"], cubos[i]["cuboY"])
+        cubos[i]["cuboXalteracao"] = colisaoX * cubos[i]["cuboXalteracao"]
+        cubos[i]["cuboYalteracao"] = colisaoY * cubos[i]["cuboYalteracao"]
 
-    cuboX += cuboXalteracao
-    cuboY += cuboYalteracao
+        if colisaoX == -1 or colisaoY == -1:
+            alteraCorCubo(i)
 
-    player(cuboX, cuboY)
+        cubos[i]["cuboX"] += cubos[i]["cuboXalteracao"]
+        cubos[i]["cuboY"] += cubos[i]["cuboYalteracao"]
+
+        player(i ,cubos[i]["cuboX"], cubos[i]["cuboY"])
+
     pygame.display.update()
