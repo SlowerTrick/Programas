@@ -46,6 +46,7 @@ cubos = []
 
 # Numeros acessórios de Cubo
 INDEX_PRIMEIRA_TECLA = 48
+INDEX_ULTIMA_TECLA = INDEX_PRIMEIRA_TECLA + 9
 
 # Posição do Player
 def player(cuboAtual, x, y):
@@ -92,7 +93,7 @@ def alteraCorCubo(cuboAtual):
     cubos[cuboAtual]["corAnterior"] = cor
 
 def EhTeclaValida(tecla):
-    return INDEX_PRIMEIRA_TECLA <= tecla <= INDEX_PRIMEIRA_TECLA + 9
+    return INDEX_PRIMEIRA_TECLA <= tecla <= INDEX_ULTIMA_TECLA
 
 # Loop principal
 running = True
