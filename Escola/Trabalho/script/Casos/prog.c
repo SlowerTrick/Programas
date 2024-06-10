@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <stdbool.h>
 
 typedef struct 
 {
@@ -33,13 +32,16 @@ typedef struct
     tPosicao inimigoLinha1[35]; // Eh impossivel a quantidade de inimigos ser maior do que 35, considerando um mapa de
     tPosicao inimigoLinha2[35]; // no maximo 100 de largura.
     tPosicao inimigoLinha3[35]; // 
+    int totalInimigosLinha1;
+    int totalInimigosLinha2;
+    int totalInimigosLinha3;
 }
 tMapa;
 
 FILE *InicializaFile(char *diretorio);
 tMapa InicializaMapa(char *diretorio);
 tInimigo InicializaInimigo(FILE *arquivo);
-void InicializaPosicoesInimigos(FILE *arquivo, tPosicao posicao[]);
+int InicializaPosicoesInimigos(FILE *arquivo, tPosicao posicao[]);
 
 int main (int argc, char *argv[])
 {
@@ -91,35 +93,11 @@ tMapa InicializaMapa(char *diretorio)
 
     tMapa mapa;
     fscanf (arquivoMapa, "%d %d\n", &mapa.largura, &mapa.altura);
-    fscanf (arquivoMapa, "(%d %d)", &mapa.jogador.posX, &mapa.jogador.posX);
-    /*
-        TODO:
-        As três linhas seguintes detalham as fileiras de inimigos, onde cada inimigo é descrito pelo 
-        par de coordenadas (coluna linha), seguindo o mesmo formato usado para o jogador. 
-        Observa-se que há apenas duas linhas com posições de inimigos, enquanto a terceira está 
-        vazia, indicando que não é obrigatório haver inimigos em todas as fileiras. Cada linha, 
-        apresentará os inimigos pertencentes àquela fileira e não haverá sobreposição entre os 
-        inimigos. As coordenadas dos arquivos consideram a posição (1 1) como o canto superior 
-        esquerdo do mapa
-    */
-
+    fscanf (arquivoMapa, "(%d %d)\n", &mapa.jogador.posX, &mapa.jogador.posY);
     mapa.desenhoInimigo = InicializaInimigo(arquivoInimigo);
-    /*
-    for (int p = 0; p < 3; p++)
-    {
-        for (int i = 0; i < 3; i++)
-        {
-            for (int j = 0; j < 3; j++)
-            {
-                printf("%c", mapa.desenhoInimigo.partes[p].desenho[i][j]);
-            }
-            printf ("\n");
-        }
-    }
-    */
-    InicializaPosicoesInimigos(arquivoMapa, mapa.inimigoLinha1);
-    InicializaPosicoesInimigos(arquivoMapa, mapa.inimigoLinha2);
-    InicializaPosicoesInimigos(arquivoMapa, mapa.inimigoLinha3);
+    mapa.totalInimigosLinha1 = InicializaPosicoesInimigos(arquivoMapa, mapa.inimigoLinha1);
+    mapa.totalInimigosLinha2 = InicializaPosicoesInimigos(arquivoMapa, mapa.inimigoLinha2);
+    mapa.totalInimigosLinha3 = InicializaPosicoesInimigos(arquivoMapa, mapa.inimigoLinha3);
 
     fclose(arquivoMapa);
     fclose(arquivoInimigo);
@@ -145,7 +123,31 @@ tInimigo InicializaInimigo(FILE *arquivo)
     return inimigo;
 }
 
-void InicializaPosicoesInimigos(FILE *arquivo, tPosicao posicao[])
+int InicializaPosicoesInimigos(FILE *arquivo, tPosicao posicao[])
 {
+    int i = 0;
+    char linha[500]; //Segundo a logica do programa, a linha nao tera mais de 500 caracteres
+    fgets(linha, sizeof(linha), arquivo);
 
+    if (linha[i] == '\n' || feof(arquivo))
+    {
+        return i;
+    }
+
+    char *atual = linha;
+    while (1)
+    {
+        char temp = 0;
+        int read = 0;
+        sscanf(atual ,"(%d %d)%c%n", &posicao[i].posX, &posicao[i].posY, &temp, &read);
+        if (read == 0) // Nada foi lido, sscanf chegou ao final da linha.
+            break;
+        atual += read; // "Avanca" o atual, (quantidade de caracteres lidos) vezes.
+        i++;
+        if (temp == '\n')
+        {
+            return i;
+        }
+    }
+    return i;
 }
