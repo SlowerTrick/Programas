@@ -30,6 +30,7 @@ typedef struct
     int largura;
     tPosicao jogador;
     tInimigo desenhoInimigo;
+    char desenhoJogador[4][4];
     tPosicao inimigoLinha1[35]; // Eh impossivel a quantidade de inimigos ser maior do que 35, considerando um mapa de
     tPosicao inimigoLinha2[35]; // no maximo 100 de largura.
     tPosicao inimigoLinha3[35]; // 
@@ -102,10 +103,10 @@ tMapa InicializaMapa(char *diretorio)
         exit(1);
     }
 
-    //mapa = PreencheMapa(mapa);
-    //PrintaBordaMapaHorizontal(saidaInicializacao, mapa.largura);
-    //PrintaMapa(saidaInicializacao, mapa);
-    //PrintaBordaMapaHorizontal(saidaInicializacao, mapa.largura);
+    mapa = PreencheMapa(mapa);
+    PrintaBordaMapaHorizontal(saidaInicializacao, mapa.largura);
+    PrintaMapa(saidaInicializacao, mapa);
+    PrintaBordaMapaHorizontal(saidaInicializacao, mapa.largura);
 
     fclose(arquivoMapa);
     fclose(arquivoInimigo);
@@ -115,7 +116,78 @@ tMapa InicializaMapa(char *diretorio)
 
 tMapa PreencheMapa(tMapa mapa) 
 {
-    
+    for (int i = 0; i < mapa.altura; i++)
+    {
+        for (int j = 0; j < mapa.largura; j++)
+        {
+            mapa.mapa[i][j] = ' ';
+        }
+    }
+    for (int i = 0; i < mapa.totalInimigosLinha1; i++)
+    {
+        mapa.mapa[mapa.inimigoLinha1[i].posY-2][mapa.inimigoLinha1[i].posX] = mapa.desenhoInimigo.partes[0].desenho[0][2];
+        mapa.mapa[mapa.inimigoLinha1[i].posY-2][mapa.inimigoLinha1[i].posX-1] = mapa.desenhoInimigo.partes[0].desenho[0][1];
+        mapa.mapa[mapa.inimigoLinha1[i].posY-2][mapa.inimigoLinha1[i].posX-2] = mapa.desenhoInimigo.partes[0].desenho[0][0];
+
+        mapa.mapa[mapa.inimigoLinha1[i].posY-1][mapa.inimigoLinha1[i].posX] = mapa.desenhoInimigo.partes[0].desenho[1][2];
+        mapa.mapa[mapa.inimigoLinha1[i].posY-1][mapa.inimigoLinha1[i].posX-1] = mapa.desenhoInimigo.partes[0].desenho[1][1];
+        mapa.mapa[mapa.inimigoLinha1[i].posY-1][mapa.inimigoLinha1[i].posX-2] = mapa.desenhoInimigo.partes[0].desenho[1][0];
+
+        mapa.mapa[mapa.inimigoLinha1[i].posY][mapa.inimigoLinha1[i].posX] = mapa.desenhoInimigo.partes[0].desenho[2][2];
+        mapa.mapa[mapa.inimigoLinha1[i].posY][mapa.inimigoLinha1[i].posX-1] = mapa.desenhoInimigo.partes[0].desenho[2][1];
+        mapa.mapa[mapa.inimigoLinha1[i].posY][mapa.inimigoLinha1[i].posX-2] = mapa.desenhoInimigo.partes[0].desenho[2][0];
+    }
+    for (int i = 0; i < mapa.totalInimigosLinha2; i++)
+    {
+        mapa.mapa[mapa.inimigoLinha2[i].posY-2][mapa.inimigoLinha2[i].posX] = mapa.desenhoInimigo.partes[0].desenho[0][2];
+        mapa.mapa[mapa.inimigoLinha2[i].posY-2][mapa.inimigoLinha2[i].posX-1] = mapa.desenhoInimigo.partes[0].desenho[0][1];
+        mapa.mapa[mapa.inimigoLinha2[i].posY-2][mapa.inimigoLinha2[i].posX-2] = mapa.desenhoInimigo.partes[0].desenho[0][0];
+
+        mapa.mapa[mapa.inimigoLinha2[i].posY-1][mapa.inimigoLinha2[i].posX] = mapa.desenhoInimigo.partes[0].desenho[1][2];
+        mapa.mapa[mapa.inimigoLinha2[i].posY-1][mapa.inimigoLinha2[i].posX-1] = mapa.desenhoInimigo.partes[0].desenho[1][1];
+        mapa.mapa[mapa.inimigoLinha2[i].posY-1][mapa.inimigoLinha2[i].posX-2] = mapa.desenhoInimigo.partes[0].desenho[1][0];
+
+        mapa.mapa[mapa.inimigoLinha2[i].posY][mapa.inimigoLinha2[i].posX] = mapa.desenhoInimigo.partes[0].desenho[2][2];
+        mapa.mapa[mapa.inimigoLinha2[i].posY][mapa.inimigoLinha2[i].posX-1] = mapa.desenhoInimigo.partes[0].desenho[2][1];
+        mapa.mapa[mapa.inimigoLinha2[i].posY][mapa.inimigoLinha2[i].posX-2] = mapa.desenhoInimigo.partes[0].desenho[2][0];
+    }
+    for (int i = 0; i < mapa.totalInimigosLinha3; i++)
+    {
+        mapa.mapa[mapa.inimigoLinha3[i].posY-2][mapa.inimigoLinha3[i].posX] = mapa.desenhoInimigo.partes[0].desenho[0][2];
+        mapa.mapa[mapa.inimigoLinha3[i].posY-2][mapa.inimigoLinha3[i].posX-1] = mapa.desenhoInimigo.partes[0].desenho[0][1];
+        mapa.mapa[mapa.inimigoLinha3[i].posY-2][mapa.inimigoLinha3[i].posX-2] = mapa.desenhoInimigo.partes[0].desenho[0][0];
+
+        mapa.mapa[mapa.inimigoLinha3[i].posY-1][mapa.inimigoLinha3[i].posX] = mapa.desenhoInimigo.partes[0].desenho[1][2];
+        mapa.mapa[mapa.inimigoLinha3[i].posY-1][mapa.inimigoLinha3[i].posX-1] = mapa.desenhoInimigo.partes[0].desenho[1][1];
+        mapa.mapa[mapa.inimigoLinha3[i].posY-1][mapa.inimigoLinha3[i].posX-2] = mapa.desenhoInimigo.partes[0].desenho[1][0];
+
+        mapa.mapa[mapa.inimigoLinha3[i].posY][mapa.inimigoLinha3[i].posX] = mapa.desenhoInimigo.partes[0].desenho[2][2];
+        mapa.mapa[mapa.inimigoLinha3[i].posY][mapa.inimigoLinha3[i].posX-1] = mapa.desenhoInimigo.partes[0].desenho[2][1];
+        mapa.mapa[mapa.inimigoLinha3[i].posY][mapa.inimigoLinha3[i].posX-2] = mapa.desenhoInimigo.partes[0].desenho[2][0];
+    }
+    mapa.desenhoJogador[0][0] = 'M';
+    mapa.desenhoJogador[0][1] = ' ';
+    mapa.desenhoJogador[0][2] = 'M';
+    for (int i = 1; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            mapa.desenhoJogador[i][j] = 'M';
+        }
+    }
+    mapa.mapa[mapa.jogador.posY-2][mapa.jogador.posX] = mapa.desenhoJogador[0][2];
+    mapa.mapa[mapa.jogador.posY-2][mapa.jogador.posX-1] = mapa.desenhoJogador[0][1];
+    mapa.mapa[mapa.jogador.posY-2][mapa.jogador.posX-2] = mapa.desenhoJogador[0][0];
+
+    mapa.mapa[mapa.jogador.posY-1][mapa.jogador.posX] = mapa.desenhoJogador[1][2];
+    mapa.mapa[mapa.jogador.posY-1][mapa.jogador.posX-1] = mapa.desenhoJogador[1][1];
+    mapa.mapa[mapa.jogador.posY-1][mapa.jogador.posX-2] = mapa.desenhoJogador[1][0];
+
+    mapa.mapa[mapa.jogador.posY][mapa.jogador.posX] = mapa.desenhoJogador[2][2];
+    mapa.mapa[mapa.jogador.posY][mapa.jogador.posX-1] = mapa.desenhoJogador[2][1];
+    mapa.mapa[mapa.jogador.posY][mapa.jogador.posX-2] = mapa.desenhoJogador[2][0];
+
+    return mapa;
 }
 
 FILE *InicializaFile(char *diretorio, int modo)
@@ -213,7 +285,7 @@ void PrintaMapa(FILE *arquivo, tMapa mapa)
 {
     for (int i = 0; i < mapa.altura; i++)
     {
-        if (i != mapa.jogador.posX - 2)
+        if (i != mapa.jogador.posX)
         {
             fprintf (arquivo, "|");
         }
