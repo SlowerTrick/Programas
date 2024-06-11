@@ -107,7 +107,11 @@ tMapa InicializaMapa(char *diretorio)
     PrintaBordaMapaHorizontal(saidaInicializacao, mapa.largura);
     PrintaMapa(saidaInicializacao, mapa);
     PrintaBordaMapaHorizontal(saidaInicializacao, mapa.largura);
+    fprintf (saidaInicializacao, "A posicao central do jogador iniciara em (%d %d).", mapa.jogador.posX, mapa.jogador.posY);
 
+    /*
+        Debugar 8 9 18 bonus_4;
+    */
     fclose(arquivoMapa);
     fclose(arquivoInimigo);
     fclose(saidaInicializacao);
@@ -285,11 +289,11 @@ void PrintaMapa(FILE *arquivo, tMapa mapa)
 {
     for (int i = 0; i < mapa.altura; i++)
     {
-        if (i != mapa.jogador.posX)
+        if (i != mapa.jogador.posY - 3)
         {
             fprintf (arquivo, "|");
         }
-        else
+        if (i == mapa.jogador.posY - 3)
         {
             fprintf (arquivo, "-");
         }
@@ -299,11 +303,11 @@ void PrintaMapa(FILE *arquivo, tMapa mapa)
             fprintf (arquivo, "%c", mapa.mapa[i][j]);
         }
 
-        if (i != mapa.jogador.posX - 2)
+        if (i != mapa.jogador.posY - 3)
         {
             fprintf (arquivo, "|\n");
         }
-        else
+        if (i == mapa.jogador.posY - 3)
         {
             fprintf (arquivo, "-\n");
         }
