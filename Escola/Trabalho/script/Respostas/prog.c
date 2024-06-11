@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 typedef struct 
 {
@@ -38,10 +39,13 @@ typedef struct
 }
 tMapa;
 
-FILE *InicializaFile(char *diretorio);
+FILE *InicializaFile(char *diretorio, int modo);
 tMapa InicializaMapa(char *diretorio);
 tInimigo InicializaInimigo(FILE *arquivo);
 int InicializaPosicoesInimigos(FILE *arquivo, tPosicao posicao[]);
+tMapa PreencheMapa(tMapa mapa);
+void PrintaBordaMapaHorizontal(FILE *arquivo, int largura);
+void PrintaMapa(FILE *arquivo, tMapa mapa);
 
 int main (int argc, char *argv[])
 {
@@ -59,19 +63,6 @@ int main (int argc, char *argv[])
     return 0;
 }
 
-FILE *InicializaFile(char *diretorio)
-{
-    FILE *arquivo = NULL;
-
-    arquivo = fopen(diretorio, "r");
-    if (!arquivo)
-    {
-        printf ("Nao foi possivel abrir o arquivo %s", diretorio);
-        return arquivo;
-    }
-    return arquivo;
-}
-
 tMapa InicializaMapa(char *diretorio)
 {
     char localMapa[1000];
@@ -79,12 +70,12 @@ tMapa InicializaMapa(char *diretorio)
     sprintf(localMapa, "%s/mapa.txt", diretorio);
     sprintf(localInimigo, "%s/inimigo.txt", diretorio);
 
-    FILE *arquivoMapa = InicializaFile(localMapa);
+    FILE *arquivoMapa = InicializaFile(localMapa, 1);
     if (!arquivoMapa)
     {
         exit(1);
     }
-    FILE *arquivoInimigo = InicializaFile(localInimigo);
+    FILE *arquivoInimigo = InicializaFile(localInimigo, 1);
     if (!arquivoInimigo)
     {
         fclose(arquivoMapa);
@@ -93,15 +84,65 @@ tMapa InicializaMapa(char *diretorio)
 
     tMapa mapa;
     fscanf (arquivoMapa, "%d %d\n", &mapa.largura, &mapa.altura);
-    fscanf (arquivoMapa, "(%d %d)\n", &mapa.jogador.posX, &mapa.jogador.posY);
+    fscanf (arquivoMapa, "(%d %d)", &mapa.jogador.posX, &mapa.jogador.posY);
+    fgetc(arquivoMapa);
+
     mapa.desenhoInimigo = InicializaInimigo(arquivoInimigo);
     mapa.totalInimigosLinha1 = InicializaPosicoesInimigos(arquivoMapa, mapa.inimigoLinha1);
     mapa.totalInimigosLinha2 = InicializaPosicoesInimigos(arquivoMapa, mapa.inimigoLinha2);
     mapa.totalInimigosLinha3 = InicializaPosicoesInimigos(arquivoMapa, mapa.inimigoLinha3);
 
+    char arquivoSaidaInicializacao[50];
+    sprintf(arquivoSaidaInicializacao, "saida/inicializacao.txt");
+    FILE *saidaInicializacao = InicializaFile(arquivoSaidaInicializacao, 2);
+    if (!saidaInicializacao)
+    {
+        fclose(arquivoMapa);
+        fclose(arquivoInimigo);
+        exit(1);
+    }
+
+    //mapa = PreencheMapa(mapa);
+    //PrintaBordaMapaHorizontal(saidaInicializacao, mapa.largura);
+    //PrintaMapa(saidaInicializacao, mapa);
+    //PrintaBordaMapaHorizontal(saidaInicializacao, mapa.largura);
+
     fclose(arquivoMapa);
     fclose(arquivoInimigo);
+    fclose(saidaInicializacao);
     return mapa;
+}
+
+tMapa PreencheMapa(tMapa mapa) 
+{
+    
+}
+
+FILE *InicializaFile(char *diretorio, int modo)
+{
+    FILE *arquivo = NULL;
+
+    if (modo == 1)
+    {
+        arquivo = fopen(diretorio, "r");
+        if (!arquivo)
+        {
+            printf ("Nao foi possivel abrir o arquivo %s", diretorio);
+            return arquivo;
+        }
+        return arquivo;
+    }
+    if (modo == 2)
+    {
+        arquivo = fopen(diretorio, "w");
+        if (!arquivo)
+        {
+            printf ("Nao foi possivel abrir o arquivo %s", diretorio);
+            return arquivo;
+        }
+        return arquivo;
+    }
+    return arquivo;
 }
 
 tInimigo InicializaInimigo(FILE *arquivo)
@@ -126,6 +167,12 @@ tInimigo InicializaInimigo(FILE *arquivo)
 int InicializaPosicoesInimigos(FILE *arquivo, tPosicao posicao[])
 {
     int i = 0;
+    
+    char temp = fgetc(arquivo);
+    if (temp == '\n')
+        return i;
+    ungetc(temp, arquivo); // Devolve o caractere para o arquivo se a linha não estiver vazia
+
     char linha[500]; //Segundo a logica do programa, a linha nao tera mais de 500 caracteres
     fgets(linha, sizeof(linha), arquivo);
 
@@ -134,12 +181,11 @@ int InicializaPosicoesInimigos(FILE *arquivo, tPosicao posicao[])
         return i;
     }
 
-    char *atual = linha;
+    int read = 0;
+    int atual = 0;
     while (1)
     {
-        char temp = 0;
-        int read = 0;
-        sscanf(atual ,"(%d %d)%c%n", &posicao[i].posX, &posicao[i].posY, &temp, &read);
+        sscanf(&linha[atual] ,"(%d %d)%c%n", &posicao[i].posX, &posicao[i].posY, &temp, &read);
         if (read == 0) // Nada foi lido, sscanf chegou ao final da linha.
             break;
         atual += read; // "Avanca" o atual, (quantidade de caracteres lidos) vezes.
@@ -150,4 +196,44 @@ int InicializaPosicoesInimigos(FILE *arquivo, tPosicao posicao[])
         }
     }
     return i;
+}
+
+void PrintaBordaMapaHorizontal(FILE *arquivo, int largura)
+{
+    fprintf (arquivo, "+");
+    for (int i = 0; i < largura; i++)
+    {
+        fprintf (arquivo, "-");
+    }
+    fprintf (arquivo, "+\n");
+    return;
+}
+
+void PrintaMapa(FILE *arquivo, tMapa mapa)
+{
+    for (int i = 0; i < mapa.altura; i++)
+    {
+        if (i != mapa.jogador.posX - 2)
+        {
+            fprintf (arquivo, "|");
+        }
+        else
+        {
+            fprintf (arquivo, "-");
+        }
+
+        for (int j = 0; j < mapa.largura; j++)
+        {
+            fprintf (arquivo, "%c", mapa.mapa[i][j]);
+        }
+
+        if (i != mapa.jogador.posX - 2)
+        {
+            fprintf (arquivo, "|\n");
+        }
+        else
+        {
+            fprintf (arquivo, "-\n");
+        }
+    }
 }
