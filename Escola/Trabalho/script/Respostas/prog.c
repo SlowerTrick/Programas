@@ -25,7 +25,7 @@ tPosicao;
 
 typedef struct 
 {
-    char mapa[40][100];
+    char mapa[41][101];
     int altura;
     int largura;
     tPosicao jogador;
@@ -84,7 +84,8 @@ tMapa InicializaMapa(char *diretorio)
     }
 
     tMapa mapa;
-    fscanf (arquivoMapa, "%d %d\n", &mapa.largura, &mapa.altura);
+    fscanf (arquivoMapa, "%d %d", &mapa.largura, &mapa.altura);
+    fgetc(arquivoMapa);
     fscanf (arquivoMapa, "(%d %d)", &mapa.jogador.posX, &mapa.jogador.posY);
     fgetc(arquivoMapa);
 
@@ -109,9 +110,6 @@ tMapa InicializaMapa(char *diretorio)
     PrintaBordaMapaHorizontal(saidaInicializacao, mapa.largura);
     fprintf (saidaInicializacao, "A posicao central do jogador iniciara em (%d %d).", mapa.jogador.posX, mapa.jogador.posY);
 
-    /*
-        Debugar 8 9 18 bonus_4;
-    */
     fclose(arquivoMapa);
     fclose(arquivoInimigo);
     fclose(saidaInicializacao);
@@ -225,7 +223,9 @@ tInimigo InicializaInimigo(FILE *arquivo)
 {
     tInimigo inimigo;
     char temp;
-    fscanf(arquivo, "%d\n", &inimigo.bonus);
+    fscanf(arquivo, "%d", &inimigo.bonus);
+    temp = fgetc(arquivo);
+
     for (int p = 0; p < 3; p++)
     {
         for (int i = 0; i < 3; i++)
@@ -234,7 +234,7 @@ tInimigo InicializaInimigo(FILE *arquivo)
             {
                 fscanf(arquivo, "%c", &inimigo.partes[p].desenho[i][j]);
             }
-            fscanf(arquivo, "%c", &temp); // Consumir o '\n'
+            temp = fgetc(arquivo);
         }
     }
     return inimigo;
@@ -259,9 +259,8 @@ int InicializaPosicoesInimigos(FILE *arquivo, tPosicao posicao[])
 
     int read = 0;
     int atual = 0;
-    while (1)
+    while (sscanf(&linha[atual] ,"(%d %d)%c%n", &posicao[i].posX, &posicao[i].posY, &temp, &read) == 3)
     {
-        sscanf(&linha[atual] ,"(%d %d)%c%n", &posicao[i].posX, &posicao[i].posY, &temp, &read);
         if (read == 0) // Nada foi lido, sscanf chegou ao final da linha.
             break;
         atual += read; // "Avanca" o atual, (quantidade de caracteres lidos) vezes.
