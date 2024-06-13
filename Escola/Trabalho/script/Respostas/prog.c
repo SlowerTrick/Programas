@@ -29,6 +29,7 @@ typedef struct
     int altura;
     int largura;
     tPosicao jogador;
+    tPosicao tiro;
     tInimigo desenhoInimigo;
     char desenhoJogador[4][4];
     tPosicao inimigoLinha1[35]; // Eh impossivel a quantidade de inimigos ser maior do que 35, considerando um mapa de
@@ -37,13 +38,44 @@ typedef struct
     int totalInimigosLinha1;
     int totalInimigosLinha2;
     int totalInimigosLinha3;
+    int totalPontos;
+    int CoeficienteDeMovimento;
 }
 tMapa;
 
-FILE *InicializaFile(char *diretorio, int modo);
+typedef struct
+{
+    
+}
+tEstatisticas;
+
+
+// Funcoes de Inicializacao do Mapa
 tMapa InicializaMapa(char *diretorio);
 tInimigo InicializaInimigo(FILE *arquivo);
 int InicializaPosicoesInimigos(FILE *arquivo, tPosicao posicao[]);
+
+// Funcoes de Realizacao do Jogo
+tMapa RealizaJogo (char *diretorio, tMapa mapa);
+tMapa VerificaColisao(tMapa mapa);
+tMapa AlterarPosicaoInimigos(tMapa mapa, int totalInimigos);
+tMapa MovimentaInimigosNaVertical(tMapa mapa);
+tMapa MovimentaInimigosNaHorizontal(tMapa mapa);
+tPosicao AlterarPosicaoPlayer(tPosicao player, char movimento);
+tPosicao AlterarPosicaoTiro(tPosicao tiro);
+tPosicao DispararTiro(tPosicao tiro, tPosicao player);
+bool HouveColisao(tPosicao tiro, tPosicao inimigo);
+bool Vitoria(int totalinimigos);
+bool Derrota(tMapa mapa);
+bool ExisteTiroAtivo(tPosicao tiro);
+bool EhMovimentoValido(char movimento, tMapa mapa);
+bool VaiSairDaBordaHorizontal(tPosicao entidade, int largura, int coeficiente);
+char LeMovimentoPlayer(FILE *arquivo);
+int EncontraMaisProximoDaBorda(tMapa mapa, int modo);
+int InimigosRestantes(tMapa mapa);
+
+//Funcoes Acessorias
+FILE *InicializaFile(char *diretorio, int modo);
 tMapa PreencheMapa(tMapa mapa);
 void PrintaBordaMapaHorizontal(FILE *arquivo, int largura);
 void PrintaMapa(FILE *arquivo, tMapa mapa);
@@ -57,8 +89,14 @@ int main (int argc, char *argv[])
     }
     tMapa mapa;
     mapa = InicializaMapa(argv[1]);
+    printf ("Largura do mapa: %d, Altura do Mapa: %d\n",mapa.largura, mapa.altura);
+    printf ("X inimigo: %d, Y inimigo : %d\n", mapa.inimigoLinha1[0].posX, mapa.inimigoLinha1[0].posY);
+    printf ("X inimigo: %d, Y inimigo : %d\n", mapa.inimigoLinha2[0].posX, mapa.inimigoLinha2[0].posY);
+    mapa = RealizaJogo(argv[1], mapa);
     /*
         TODO: Implementar o topico animação Bonus do inimigo
+        TODO: OS SPRITES DO JOGADOR NÃO SÃO PRINTADOS PELA FUNCAO PRINTA MAPA (A POSICAO ESTÁ OK), O SPRITE DA BALA NAO 
+        EXISTE, OS INIMIGOS ESTAO ESTATICOS E OS PONTOS NAO ESTAO SENDO INCREMENTADOS
     */
 
     return 0;
@@ -311,4 +349,441 @@ void PrintaMapa(FILE *arquivo, tMapa mapa)
             fprintf (arquivo, "-\n");
         }
     }
+}
+
+tMapa RealizaJogo (char *diretorio, tMapa mapa)
+{
+    int i = 0;
+    int totalInimigos = mapa.totalInimigosLinha1 + mapa.totalInimigosLinha2 + mapa.totalInimigosLinha3;
+    mapa.tiro.posX = -1; // Inicializacao do tiroX
+    mapa.tiro.posY = -1; // Inicializacao do tiroY
+    mapa.CoeficienteDeMovimento = 1; // Inicializacao do coeficiente
+
+    char localEntrada[1000];
+    sprintf(localEntrada, "%s/entrada.txt", diretorio);
+    FILE *arquivoEntrada = InicializaFile(localEntrada, 1);
+    if (!arquivoEntrada)
+    {
+        exit(1);
+    }
+    char arquivoSaidaSaida[50];
+    sprintf(arquivoSaidaSaida, "saida/saida.txt");
+    FILE *saidaSaida = InicializaFile(arquivoSaidaSaida, 2);
+    if (!saidaSaida)
+    {
+        fclose(arquivoEntrada);
+        exit(1);
+    }
+
+    fprintf(saidaSaida, "Pontos: %i | Iteracoes: %i\n", mapa.totalPontos, i);
+    PrintaBordaMapaHorizontal(saidaSaida, mapa.largura);
+    PrintaMapa(saidaSaida, mapa);
+    PrintaBordaMapaHorizontal(saidaSaida, mapa.largura);
+
+    while (!Vitoria(totalInimigos) && !Derrota(mapa) && !feof(arquivoEntrada))
+    {
+        bool TiroDisparadoNessaIteracao = false;
+        char movimento = LeMovimentoPlayer(arquivoEntrada);
+
+        if (EhMovimentoValido(movimento, mapa))
+        {
+            if (movimento == ' ')
+            {
+                mapa.tiro = DispararTiro(mapa.tiro, mapa.jogador);
+                TiroDisparadoNessaIteracao = true;
+            }
+            else if (movimento == 'a' || movimento == 'd')
+            {
+                mapa.jogador = AlterarPosicaoPlayer(mapa.jogador, movimento);
+            }
+        }
+
+        mapa = AlterarPosicaoInimigos(mapa, totalInimigos);
+        
+        if (ExisteTiroAtivo(mapa.tiro) && TiroDisparadoNessaIteracao == false)
+        {
+            mapa.tiro = AlterarPosicaoTiro(mapa.tiro);
+        }
+
+        i++;
+        fprintf(saidaSaida, "Pontos: %i | Iteracoes: %i\n", mapa.totalPontos, i);
+        PrintaBordaMapaHorizontal(saidaSaida, mapa.largura);
+        PrintaMapa(saidaSaida, mapa);
+        PrintaBordaMapaHorizontal(saidaSaida, mapa.largura);
+
+        mapa = VerificaColisao(mapa);
+        if (mapa.tiro.posY == 1)
+        {
+            mapa.tiro.posY = -1;
+            mapa.tiro.posX = -1;
+        }
+
+        totalInimigos = InimigosRestantes(mapa);
+        TiroDisparadoNessaIteracao = false;
+    }
+
+    if (Vitoria(totalInimigos))
+    {
+        fprintf(saidaSaida, "Parabéns, você ganhou!\n");
+    }
+    if (Derrota(mapa))
+    {
+        fprintf(saidaSaida, "Você perdeu, tente novamente!\n");
+    }
+
+    fclose(arquivoEntrada);
+    fclose(saidaSaida);
+    return mapa;
+}
+
+bool Vitoria(int totalinimigos)
+{
+    if (totalinimigos == 0)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool Derrota(tMapa mapa)
+{
+    for (int i = 0; i < mapa.totalInimigosLinha1; i++)
+    {
+        if (mapa.inimigoLinha1[i].posX != -1)
+        {
+            if (mapa.inimigoLinha1[i].posY == mapa.jogador.posY - 1)
+            {
+                return true;
+            }
+        }
+    }
+    for (int i = 0; i < mapa.totalInimigosLinha2; i++)
+    {
+        if (mapa.inimigoLinha2[i].posX != -1)
+        {
+            if (mapa.inimigoLinha2[i].posY == mapa.jogador.posY - 1)
+            {
+                return true;
+            }
+        }
+    }
+    for (int i = 0; i < mapa.totalInimigosLinha3; i++)
+    {
+        if (mapa.inimigoLinha3[i].posX != -1)
+        {
+            if (mapa.inimigoLinha3[i].posY == mapa.jogador.posY - 1)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+char LeMovimentoPlayer(FILE *arquivo)
+{
+    char movimento = fgetc(arquivo);
+    fgetc(arquivo);
+    return movimento;
+}
+
+bool EhMovimentoValido(char movimento, tMapa mapa)
+{
+    if (movimento == 's')
+    {
+        return true;
+    }
+    if (movimento == ' ')
+    {
+        if (!ExisteTiroAtivo(mapa.tiro))
+        {
+            return true;
+        }
+        return false;
+    }
+    if (movimento == 'a')
+    {
+        if (!VaiSairDaBordaHorizontal(mapa.jogador, mapa.largura, -1))
+        {
+            return true;
+        }
+        return false;
+    }
+    if (movimento == 'd')
+    {
+        if (!VaiSairDaBordaHorizontal(mapa.jogador, mapa.largura, 1))
+        {
+            return true;
+        }
+        return false;
+    }
+    return false;
+}
+
+bool ExisteTiroAtivo(tPosicao tiro)
+{
+    if (tiro.posX != -1 || tiro.posY != -1)
+    {
+        return true;
+    }
+    return false;
+}
+
+tMapa VerificaColisao(tMapa mapa)
+{
+    for (int i = 0; i < mapa.totalInimigosLinha1; i++)
+    {
+        if (HouveColisao(mapa.tiro, mapa.inimigoLinha1[i]))
+        {
+            mapa.tiro.posX = -1;
+            mapa.tiro.posY = -1;
+            mapa.inimigoLinha1[i].posX = -1;
+            mapa.inimigoLinha1[i].posY = -1;
+            return mapa;
+        }
+    }
+    for (int i = 0; i < mapa.totalInimigosLinha2; i++)
+    {
+        if (HouveColisao(mapa.tiro, mapa.inimigoLinha2[i]))
+        {
+            mapa.tiro.posX = -1;
+            mapa.tiro.posY = -1;
+            mapa.inimigoLinha2[i].posX = -1;
+            mapa.inimigoLinha2[i].posY = -1;
+            return mapa;
+        }
+    }
+    for (int i = 0; i < mapa.totalInimigosLinha3; i++)
+    {
+        if (HouveColisao(mapa.tiro, mapa.inimigoLinha3[i]))
+        {
+            mapa.tiro.posX = -1;
+            mapa.tiro.posY = -1;
+            mapa.inimigoLinha3[i].posX = -1;
+            mapa.inimigoLinha3[i].posY = -1;
+            return mapa;
+        }
+    }
+    return mapa;
+}
+
+bool HouveColisao(tPosicao tiro, tPosicao inimigo)
+{
+    if (tiro.posX >= inimigo.posX - 1 && tiro.posX <= inimigo.posX + 1 && 
+        tiro.posY >= inimigo.posY - 1 && tiro.posY <= inimigo.posY + 1)
+    {
+        return true;
+    }
+    return false;
+}
+
+int InimigosRestantes(tMapa mapa)
+{
+    int total = 0;
+    for (int i = 0; i < mapa.totalInimigosLinha1; i++)
+    {
+        if (mapa.inimigoLinha1[i].posX != -1)
+        {
+            total++;
+        }
+    }
+    for (int i = 0; i < mapa.totalInimigosLinha2; i++)
+    {
+        if (mapa.inimigoLinha2[i].posX != -1)
+        {
+            total++;
+        }
+    }
+    for (int i = 0; i < mapa.totalInimigosLinha3; i++)
+    {
+        if (mapa.inimigoLinha3[i].posX != -1)
+        {
+            total++;
+        }
+    }
+    return total;
+}
+
+tMapa AlterarPosicaoInimigos(tMapa mapa, int totalInimigos)
+{
+    if (mapa.CoeficienteDeMovimento > 0)
+    {
+        tPosicao inimigoMaisAhDireita;
+        inimigoMaisAhDireita.posX = EncontraMaisProximoDaBorda(mapa, 1);
+        
+        if (VaiSairDaBordaHorizontal(inimigoMaisAhDireita, mapa.largura, mapa.CoeficienteDeMovimento))
+        {
+            mapa = MovimentaInimigosNaVertical(mapa);
+        }
+        else
+        {
+            mapa = MovimentaInimigosNaHorizontal(mapa);
+        }
+    }
+    if (mapa.CoeficienteDeMovimento < 0)
+    {
+        tPosicao inimigoMaisAhEsquerda;
+        inimigoMaisAhEsquerda.posX = EncontraMaisProximoDaBorda(mapa, 2);
+
+        if (VaiSairDaBordaHorizontal(inimigoMaisAhEsquerda, mapa.largura, mapa.CoeficienteDeMovimento))
+        {
+            mapa = MovimentaInimigosNaVertical(mapa);
+        }
+        else
+        {
+            mapa = MovimentaInimigosNaHorizontal(mapa);
+        }
+    }
+    return mapa;
+}
+
+tMapa MovimentaInimigosNaVertical(tMapa mapa)
+{
+    for (int i = 0; i < mapa.totalInimigosLinha1; i++)
+    {
+        if (mapa.inimigoLinha1[i].posX != -1)
+        {
+            mapa.inimigoLinha1[i].posY -= 1;
+        }
+    }
+    for (int i = 0; i < mapa.totalInimigosLinha2; i++)
+    {
+        if (mapa.inimigoLinha2[i].posX != -1)
+        {
+            mapa.inimigoLinha2[i].posY -= 1;
+        }
+    }
+    for (int i = 0; i < mapa.totalInimigosLinha3; i++)
+    {
+        if (mapa.inimigoLinha3[i].posX != -1)
+        {
+            mapa.inimigoLinha3[i].posY -= 1;
+        }
+    }
+    mapa.CoeficienteDeMovimento = mapa.CoeficienteDeMovimento * (-1);
+    return mapa;
+}
+
+tMapa MovimentaInimigosNaHorizontal(tMapa mapa)
+{
+    for (int i = 0; i < mapa.totalInimigosLinha1; i++)
+    {
+        if (mapa.inimigoLinha1[i].posX != -1)
+        {
+            mapa.inimigoLinha1[i].posX += mapa.CoeficienteDeMovimento;
+        }
+    }
+    for (int i = 0; i < mapa.totalInimigosLinha2; i++)
+    {
+        if (mapa.inimigoLinha2[i].posX != -1)
+        {
+            mapa.inimigoLinha2[i].posX += mapa.CoeficienteDeMovimento;
+        }
+    }
+    for (int i = 0; i < mapa.totalInimigosLinha3; i++)
+    {
+        if (mapa.inimigoLinha3[i].posX != -1)
+        {
+            mapa.inimigoLinha3[i].posX += mapa.CoeficienteDeMovimento;
+        }
+    }
+    return mapa;
+}
+
+int EncontraMaisProximoDaBorda(tMapa mapa, int modo)
+{
+    if (modo == 1)
+    {
+        tPosicao inimigoMaisAhDireita;
+        inimigoMaisAhDireita.posX = 0;
+
+        for (int i = 0; i < mapa.totalInimigosLinha1; i++)
+        {
+            if (mapa.inimigoLinha1[i].posX > inimigoMaisAhDireita.posX && mapa.inimigoLinha1[i].posX != -1)
+            {
+                inimigoMaisAhDireita.posX = mapa.inimigoLinha1[i].posX;
+            }
+        }
+        for (int i = 0; i < mapa.totalInimigosLinha2; i++)
+        {
+            if (mapa.inimigoLinha2[i].posX > inimigoMaisAhDireita.posX && mapa.inimigoLinha2[i].posX != -1)
+            {
+                inimigoMaisAhDireita.posX = mapa.inimigoLinha2[i].posX;
+            }
+        }
+        for (int i = 0; i < mapa.totalInimigosLinha3; i++)
+        {
+            if (mapa.inimigoLinha3[i].posX > inimigoMaisAhDireita.posX && mapa.inimigoLinha3[i].posX != -1)
+            {
+                inimigoMaisAhDireita.posX = mapa.inimigoLinha3[i].posX;
+            }
+        }
+        return inimigoMaisAhDireita.posX;
+    }
+    if (modo == 2)
+    {
+        tPosicao inimigoMaisAhEsquerda;
+        inimigoMaisAhEsquerda.posX = mapa.largura;
+
+        for (int i = 0; i < mapa.totalInimigosLinha1; i++)
+        {
+            if (mapa.inimigoLinha1[i].posX < inimigoMaisAhEsquerda.posX && mapa.inimigoLinha1[i].posX != -1)
+            {
+                inimigoMaisAhEsquerda.posX = mapa.inimigoLinha1[i].posX;
+            }
+        }
+        for (int i = 0; i < mapa.totalInimigosLinha2; i++)
+        {
+            if (mapa.inimigoLinha2[i].posX < inimigoMaisAhEsquerda.posX && mapa.inimigoLinha2[i].posX != -1)
+            {
+                inimigoMaisAhEsquerda.posX = mapa.inimigoLinha2[i].posX;
+            }
+        }
+        for (int i = 0; i < mapa.totalInimigosLinha3; i++)
+        {
+            if (mapa.inimigoLinha3[i].posX > inimigoMaisAhEsquerda.posX && mapa.inimigoLinha3[i].posX != -1)
+            {
+                inimigoMaisAhEsquerda.posX = mapa.inimigoLinha3[i].posX;
+            }
+        }
+        return inimigoMaisAhEsquerda.posX;
+    }
+    return 0;
+}
+
+tPosicao AlterarPosicaoTiro(tPosicao tiro)
+{
+    tiro.posY -= 1;
+    return tiro;
+}
+
+tPosicao AlterarPosicaoPlayer(tPosicao player, char movimento)
+{
+    if (movimento == 'a')
+    {
+        player.posX -= 1;
+        return player;
+    }
+    if (movimento == 'd')
+    {
+        player.posX += 1;
+        return player;
+    }
+    return player;
+}
+
+tPosicao DispararTiro(tPosicao tiro, tPosicao player)
+{
+    tiro.posX = player.posX;
+    tiro.posY = player.posY - 2;
+    return tiro;
+}
+
+bool VaiSairDaBordaHorizontal(tPosicao entidade, int largura, int coeficiente)
+{
+    if (entidade.posX + coeficiente == largura || entidade.posX + coeficiente == 1)
+    {
+        return true;
+    }
+    return false;
 }
