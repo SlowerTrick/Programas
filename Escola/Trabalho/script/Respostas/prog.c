@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <ctype.h>
 
 typedef struct 
 {
@@ -406,59 +407,62 @@ tMapa RealizaJogo (char *diretorio, tMapa mapa)
     bool CheckVitoria = false; // Vitoria tem que passar 2 vezes para a iteracao final
     int ContaVitorias = 0;
     
-    while (!CheckVitoria && !Derrota(mapa))
+    if (!Vitoria(totalInimigos))
     {
-        bool TiroDisparadoNessaIteracao = false;
-        char movimento = LeMovimentoPlayer(arquivoEntrada);
-
-        if (EhMovimentoValido(movimento, mapa))
+        while (!CheckVitoria && !Derrota(mapa))
         {
-            if (movimento == ' ')
+            bool TiroDisparadoNessaIteracao = false;
+            char movimento = LeMovimentoPlayer(arquivoEntrada);
+
+            if (EhMovimentoValido(movimento, mapa))
             {
-                mapa.tiro = DispararTiro(mapa.tiro, mapa.jogador);
-                TiroDisparadoNessaIteracao = true;
+                if (movimento == ' ')
+                {
+                    mapa.tiro = DispararTiro(mapa.tiro, mapa.jogador);
+                    TiroDisparadoNessaIteracao = true;
+                }
+                else if (movimento == 'a' || movimento == 'd')
+                {
+                    mapa.jogador = AlterarPosicaoPlayer(mapa.jogador, movimento);
+                }
             }
-            else if (movimento == 'a' || movimento == 'd')
+
+            mapa = AlterarPosicaoInimigos(mapa, totalInimigos);
+            
+            if (ExisteTiroAtivo(mapa.tiro) && TiroDisparadoNessaIteracao == false)
             {
-                mapa.jogador = AlterarPosicaoPlayer(mapa.jogador, movimento);
+                mapa.tiro = AlterarPosicaoTiro(mapa.tiro);
             }
-        }
+            mapa = PreencheMapa(mapa); 
 
-        mapa = AlterarPosicaoInimigos(mapa, totalInimigos);
-        
-        if (ExisteTiroAtivo(mapa.tiro) && TiroDisparadoNessaIteracao == false)
-        {
-            mapa.tiro = AlterarPosicaoTiro(mapa.tiro);
-        }
-        mapa = PreencheMapa(mapa); 
+            i++;
+            fprintf(saidaSaida, "Pontos: %i | Iteracoes: %i\n", mapa.totalPontos, i);
+            PrintaBordaMapaHorizontal(saidaSaida, mapa.largura);
+            PrintaMapa(saidaSaida, mapa);
+            PrintaBordaMapaHorizontal(saidaSaida, mapa.largura);
 
-        i++;
-        fprintf(saidaSaida, "Pontos: %i | Iteracoes: %i\n", mapa.totalPontos, i);
-        PrintaBordaMapaHorizontal(saidaSaida, mapa.largura);
-        PrintaMapa(saidaSaida, mapa);
-        PrintaBordaMapaHorizontal(saidaSaida, mapa.largura);
-
-        if (Derrota(mapa))
-        {
-            break;
-        }
-
-        mapa = VerificaColisao(mapa);
-        if (mapa.tiro.posY == 0)
-        {
-            mapa.tiro.posY = -1;
-            mapa.tiro.posX = -1;
-        }
-
-        totalInimigos = InimigosRestantes(mapa);
-        TiroDisparadoNessaIteracao = false; 
-
-        if (Vitoria(totalInimigos))
-        {
-            ContaVitorias++;
-            if (ContaVitorias == 2)
+            if (Derrota(mapa))
             {
-                CheckVitoria = true;
+                break;
+            }
+
+            mapa = VerificaColisao(mapa);
+            if (mapa.tiro.posY == 0)
+            {
+                mapa.tiro.posY = -1;
+                mapa.tiro.posX = -1;
+            }
+
+            totalInimigos = InimigosRestantes(mapa);
+            TiroDisparadoNessaIteracao = false; 
+
+            if (Vitoria(totalInimigos))
+            {
+                ContaVitorias++;
+                if (ContaVitorias == 2)
+                {
+                    CheckVitoria = true;
+                }
             }
         }
     }
@@ -524,6 +528,12 @@ bool Derrota(tMapa mapa)
 char LeMovimentoPlayer(FILE *arquivo)
 {
     char movimento = fgetc(arquivo);
+    if (movimento == '\n')
+    {
+        movimento = fgetc(arquivo);
+        fgetc(arquivo);
+        return movimento;
+    }
     fgetc(arquivo);
     return movimento;
 }
@@ -534,7 +544,7 @@ bool EhMovimentoValido(char movimento, tMapa mapa)
     {
         return true;
     }
-    if (movimento == ' ')
+    if (movimento == ' ' || movimento == '\n')
     {
         if (!ExisteTiroAtivo(mapa.tiro))
         {
@@ -739,7 +749,7 @@ tMapa MovimentaInimigosNaVertical(tMapa mapa)
     {
         if (mapa.inimigoLinha3[i].posX != -1)
         {
-            mapa.inimigoLinha3[i].posY -= 1;
+            mapa.inimigoLinha3[i].posY += 1;
         }
     }
     mapa.CoeficienteDeMovimento = mapa.CoeficienteDeMovimento * (-1);
