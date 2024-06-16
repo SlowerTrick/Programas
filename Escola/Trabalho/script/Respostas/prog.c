@@ -506,7 +506,7 @@ bool Derrota(tMapa mapa)
     {
         if (mapa.inimigoLinha2[i].posX != -1)
         {
-            if (mapa.inimigoLinha2[i].posY == mapa.jogador.posY - 1)
+            if (mapa.inimigoLinha2[i].posY == mapa.jogador.posY - 2)
             {
                 return true;
             }
@@ -516,7 +516,7 @@ bool Derrota(tMapa mapa)
     {
         if (mapa.inimigoLinha3[i].posX != -1)
         {
-            if (mapa.inimigoLinha3[i].posY == mapa.jogador.posY - 1)
+            if (mapa.inimigoLinha3[i].posY == mapa.jogador.posY - 2)
             {
                 return true;
             }
@@ -833,7 +833,7 @@ int EncontraMaisProximoDaBorda(tMapa mapa, int modo)
         }
         for (int i = 0; i < mapa.totalInimigosLinha3; i++)
         {
-            if (mapa.inimigoLinha3[i].posX > inimigoMaisAhEsquerda.posX && mapa.inimigoLinha3[i].posX != -1)
+            if (mapa.inimigoLinha3[i].posX < inimigoMaisAhEsquerda.posX && mapa.inimigoLinha3[i].posX != -1)
             {
                 inimigoMaisAhEsquerda.posX = mapa.inimigoLinha3[i].posX;
             }
