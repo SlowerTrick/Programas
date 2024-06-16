@@ -13,6 +13,7 @@ tParteInimigo;
 typedef struct 
 {
     int bonus;
+    int desenhoAtual;
     tParteInimigo partes[3];
 } 
 tInimigo;
@@ -79,6 +80,7 @@ int InimigosRestantes(tMapa mapa);
 //Funcoes Acessorias
 FILE *InicializaFile(char *diretorio, int modo);
 tMapa PreencheMapa(tMapa mapa);
+tMapa DesenhaInimigos(tMapa mapa, int desenhoAtual);
 void PrintaBordaMapaHorizontal(FILE *arquivo, int largura);
 void PrintaMapa(FILE *arquivo, tMapa mapa);
 
@@ -175,57 +177,7 @@ tMapa PreencheMapa(tMapa mapa)
     mapa.mapa[mapa.jogador.posY][mapa.jogador.posX-2] = mapa.desenhoJogador[2][0];
 
     // Posiciona os inimigos
-    for (int i = 0; i < mapa.totalInimigosLinha1; i++)
-    {
-        if (mapa.inimigoLinha1[i].posX != -1)
-        {
-            mapa.mapa[mapa.inimigoLinha1[i].posY-2][mapa.inimigoLinha1[i].posX] = mapa.desenhoInimigo.partes[0].desenho[0][2];
-            mapa.mapa[mapa.inimigoLinha1[i].posY-2][mapa.inimigoLinha1[i].posX-1] = mapa.desenhoInimigo.partes[0].desenho[0][1];
-            mapa.mapa[mapa.inimigoLinha1[i].posY-2][mapa.inimigoLinha1[i].posX-2] = mapa.desenhoInimigo.partes[0].desenho[0][0];
-
-            mapa.mapa[mapa.inimigoLinha1[i].posY-1][mapa.inimigoLinha1[i].posX] = mapa.desenhoInimigo.partes[0].desenho[1][2];
-            mapa.mapa[mapa.inimigoLinha1[i].posY-1][mapa.inimigoLinha1[i].posX-1] = mapa.desenhoInimigo.partes[0].desenho[1][1];
-            mapa.mapa[mapa.inimigoLinha1[i].posY-1][mapa.inimigoLinha1[i].posX-2] = mapa.desenhoInimigo.partes[0].desenho[1][0];
-
-            mapa.mapa[mapa.inimigoLinha1[i].posY][mapa.inimigoLinha1[i].posX] = mapa.desenhoInimigo.partes[0].desenho[2][2];
-            mapa.mapa[mapa.inimigoLinha1[i].posY][mapa.inimigoLinha1[i].posX-1] = mapa.desenhoInimigo.partes[0].desenho[2][1];
-            mapa.mapa[mapa.inimigoLinha1[i].posY][mapa.inimigoLinha1[i].posX-2] = mapa.desenhoInimigo.partes[0].desenho[2][0];
-        }
-    }
-    for (int i = 0; i < mapa.totalInimigosLinha2; i++)
-    {
-        if (mapa.inimigoLinha2[i].posX != -1)
-        {
-            mapa.mapa[mapa.inimigoLinha2[i].posY-2][mapa.inimigoLinha2[i].posX] = mapa.desenhoInimigo.partes[0].desenho[0][2];
-            mapa.mapa[mapa.inimigoLinha2[i].posY-2][mapa.inimigoLinha2[i].posX-1] = mapa.desenhoInimigo.partes[0].desenho[0][1];
-            mapa.mapa[mapa.inimigoLinha2[i].posY-2][mapa.inimigoLinha2[i].posX-2] = mapa.desenhoInimigo.partes[0].desenho[0][0];
-
-            mapa.mapa[mapa.inimigoLinha2[i].posY-1][mapa.inimigoLinha2[i].posX] = mapa.desenhoInimigo.partes[0].desenho[1][2];
-            mapa.mapa[mapa.inimigoLinha2[i].posY-1][mapa.inimigoLinha2[i].posX-1] = mapa.desenhoInimigo.partes[0].desenho[1][1];
-            mapa.mapa[mapa.inimigoLinha2[i].posY-1][mapa.inimigoLinha2[i].posX-2] = mapa.desenhoInimigo.partes[0].desenho[1][0];
-
-            mapa.mapa[mapa.inimigoLinha2[i].posY][mapa.inimigoLinha2[i].posX] = mapa.desenhoInimigo.partes[0].desenho[2][2];
-            mapa.mapa[mapa.inimigoLinha2[i].posY][mapa.inimigoLinha2[i].posX-1] = mapa.desenhoInimigo.partes[0].desenho[2][1];
-            mapa.mapa[mapa.inimigoLinha2[i].posY][mapa.inimigoLinha2[i].posX-2] = mapa.desenhoInimigo.partes[0].desenho[2][0];
-        }
-    }
-    for (int i = 0; i < mapa.totalInimigosLinha3; i++)
-    {
-        if (mapa.inimigoLinha3[i].posX != -1)
-        {
-            mapa.mapa[mapa.inimigoLinha3[i].posY-2][mapa.inimigoLinha3[i].posX] = mapa.desenhoInimigo.partes[0].desenho[0][2];
-            mapa.mapa[mapa.inimigoLinha3[i].posY-2][mapa.inimigoLinha3[i].posX-1] = mapa.desenhoInimigo.partes[0].desenho[0][1];
-            mapa.mapa[mapa.inimigoLinha3[i].posY-2][mapa.inimigoLinha3[i].posX-2] = mapa.desenhoInimigo.partes[0].desenho[0][0];
-
-            mapa.mapa[mapa.inimigoLinha3[i].posY-1][mapa.inimigoLinha3[i].posX] = mapa.desenhoInimigo.partes[0].desenho[1][2];
-            mapa.mapa[mapa.inimigoLinha3[i].posY-1][mapa.inimigoLinha3[i].posX-1] = mapa.desenhoInimigo.partes[0].desenho[1][1];
-            mapa.mapa[mapa.inimigoLinha3[i].posY-1][mapa.inimigoLinha3[i].posX-2] = mapa.desenhoInimigo.partes[0].desenho[1][0];
-
-            mapa.mapa[mapa.inimigoLinha3[i].posY][mapa.inimigoLinha3[i].posX] = mapa.desenhoInimigo.partes[0].desenho[2][2];
-            mapa.mapa[mapa.inimigoLinha3[i].posY][mapa.inimigoLinha3[i].posX-1] = mapa.desenhoInimigo.partes[0].desenho[2][1];
-            mapa.mapa[mapa.inimigoLinha3[i].posY][mapa.inimigoLinha3[i].posX-2] = mapa.desenhoInimigo.partes[0].desenho[2][0];
-        }
-    }
+    mapa = DesenhaInimigos(mapa, mapa.desenhoInimigo.desenhoAtual);
 
     // Posiciona o tiro
     if (mapa.tiro.posX != -1)
@@ -233,6 +185,71 @@ tMapa PreencheMapa(tMapa mapa)
         mapa.mapa[mapa.tiro.posY][mapa.tiro.posX] = 'o';
     }
 
+    return mapa;
+}
+
+tMapa DesenhaInimigos(tMapa mapa, int desenhoAtual)
+{
+    for (int i = 0; i < mapa.totalInimigosLinha1; i++)
+    {
+        if (mapa.inimigoLinha1[i].posX != -1)
+        {
+            mapa.mapa[mapa.inimigoLinha1[i].posY-2][mapa.inimigoLinha1[i].posX] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[0][2];
+            mapa.mapa[mapa.inimigoLinha1[i].posY-2][mapa.inimigoLinha1[i].posX-1] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[0][1];
+            mapa.mapa[mapa.inimigoLinha1[i].posY-2][mapa.inimigoLinha1[i].posX-2] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[0][0];
+
+            mapa.mapa[mapa.inimigoLinha1[i].posY-1][mapa.inimigoLinha1[i].posX] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[1][2];
+            mapa.mapa[mapa.inimigoLinha1[i].posY-1][mapa.inimigoLinha1[i].posX-1] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[1][1];
+            mapa.mapa[mapa.inimigoLinha1[i].posY-1][mapa.inimigoLinha1[i].posX-2] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[1][0];
+
+            mapa.mapa[mapa.inimigoLinha1[i].posY][mapa.inimigoLinha1[i].posX] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[2][2];
+            mapa.mapa[mapa.inimigoLinha1[i].posY][mapa.inimigoLinha1[i].posX-1] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[2][1];
+            mapa.mapa[mapa.inimigoLinha1[i].posY][mapa.inimigoLinha1[i].posX-2] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[2][0];
+        }
+    }
+    for (int i = 0; i < mapa.totalInimigosLinha2; i++)
+    {
+        if (mapa.inimigoLinha2[i].posX != -1)
+        {
+            mapa.mapa[mapa.inimigoLinha2[i].posY-2][mapa.inimigoLinha2[i].posX] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[0][2];
+            mapa.mapa[mapa.inimigoLinha2[i].posY-2][mapa.inimigoLinha2[i].posX-1] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[0][1];
+            mapa.mapa[mapa.inimigoLinha2[i].posY-2][mapa.inimigoLinha2[i].posX-2] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[0][0];
+
+            mapa.mapa[mapa.inimigoLinha2[i].posY-1][mapa.inimigoLinha2[i].posX] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[1][2];
+            mapa.mapa[mapa.inimigoLinha2[i].posY-1][mapa.inimigoLinha2[i].posX-1] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[1][1];
+            mapa.mapa[mapa.inimigoLinha2[i].posY-1][mapa.inimigoLinha2[i].posX-2] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[1][0];
+
+            mapa.mapa[mapa.inimigoLinha2[i].posY][mapa.inimigoLinha2[i].posX] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[2][2];
+            mapa.mapa[mapa.inimigoLinha2[i].posY][mapa.inimigoLinha2[i].posX-1] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[2][1];
+            mapa.mapa[mapa.inimigoLinha2[i].posY][mapa.inimigoLinha2[i].posX-2] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[2][0];
+        }
+    }
+    for (int i = 0; i < mapa.totalInimigosLinha3; i++)
+    {
+        if (mapa.inimigoLinha3[i].posX != -1)
+        {
+            mapa.mapa[mapa.inimigoLinha3[i].posY-2][mapa.inimigoLinha3[i].posX] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[0][2];
+            mapa.mapa[mapa.inimigoLinha3[i].posY-2][mapa.inimigoLinha3[i].posX-1] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[0][1];
+            mapa.mapa[mapa.inimigoLinha3[i].posY-2][mapa.inimigoLinha3[i].posX-2] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[0][0];
+
+            mapa.mapa[mapa.inimigoLinha3[i].posY-1][mapa.inimigoLinha3[i].posX] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[1][2];
+            mapa.mapa[mapa.inimigoLinha3[i].posY-1][mapa.inimigoLinha3[i].posX-1] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[1][1];
+            mapa.mapa[mapa.inimigoLinha3[i].posY-1][mapa.inimigoLinha3[i].posX-2] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[1][0];
+
+            mapa.mapa[mapa.inimigoLinha3[i].posY][mapa.inimigoLinha3[i].posX] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[2][2];
+            mapa.mapa[mapa.inimigoLinha3[i].posY][mapa.inimigoLinha3[i].posX-1] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[2][1];
+            mapa.mapa[mapa.inimigoLinha3[i].posY][mapa.inimigoLinha3[i].posX-2] = mapa.desenhoInimigo.partes[desenhoAtual].desenho[2][0];
+        }
+    }
+
+    if (mapa.desenhoInimigo.desenhoAtual == 2 && mapa.desenhoInimigo.bonus == 1)
+    {
+        mapa.desenhoInimigo.desenhoAtual = 0;
+    }
+    else if (mapa.desenhoInimigo.desenhoAtual < 2 && mapa.desenhoInimigo.bonus == 1)
+    {
+        mapa.desenhoInimigo.desenhoAtual++;
+    }
     return mapa;
 }
 
@@ -298,6 +315,7 @@ tInimigo InicializaInimigo(FILE *arquivo)
             temp = fgetc(arquivo);
         }
     }
+    inimigo.desenhoAtual = 0;
     return inimigo;
 }
 
@@ -376,7 +394,7 @@ void PrintaMapa(FILE *arquivo, tMapa mapa)
 
 tMapa RealizaJogo (char *diretorio, tMapa mapa)
 {
-    int i = 0, verificadorfinal = 0;
+    int i = 0;
     int totalInimigos = mapa.totalInimigosLinha1 + mapa.totalInimigosLinha2 + mapa.totalInimigosLinha3;
     mapa.tiro.posX = -1; // Inicializacao do tiroX
     mapa.tiro.posY = -1; // Inicializacao do tiroY
@@ -528,13 +546,10 @@ bool Derrota(tMapa mapa)
 char LeMovimentoPlayer(FILE *arquivo)
 {
     char movimento = fgetc(arquivo);
-    if (movimento == '\n')
+    while (movimento == '\n')
     {
         movimento = fgetc(arquivo);
-        fgetc(arquivo);
-        return movimento;
     }
-    fgetc(arquivo);
     return movimento;
 }
 
