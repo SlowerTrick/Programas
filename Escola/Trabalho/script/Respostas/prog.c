@@ -211,7 +211,7 @@ tMapa PreencheMapa(tMapa mapa)
     }
     for (int i = 0; i < mapa.totalInimigosLinha3; i++)
     {
-        if (mapa.inimigoLinha2[i].posX != -1)
+        if (mapa.inimigoLinha3[i].posX != -1)
         {
             mapa.mapa[mapa.inimigoLinha3[i].posY-2][mapa.inimigoLinha3[i].posX] = mapa.desenhoInimigo.partes[0].desenho[0][2];
             mapa.mapa[mapa.inimigoLinha3[i].posY-2][mapa.inimigoLinha3[i].posX-1] = mapa.desenhoInimigo.partes[0].desenho[0][1];
