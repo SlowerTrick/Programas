@@ -37,7 +37,7 @@ class Game:
             self.keys['left'] = True
         if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
             self.keys['right'] = True
-        if event.key == pygame.K_d or event.key == pygame.K_RIGHT or event.key == pygame.K_SPACE:
+        if event.key == pygame.K_w or event.key == pygame.K_UP or event.key == pygame.K_SPACE:
             self.keys['right'] = True
         self.update_player_speed()
 
