@@ -171,7 +171,7 @@ while running:
             if event.key == pygame.K_s or event.key == pygame.K_DOWN:
                 playerYalteracao = 0
 
-    #Limitar movimentalão do player pra ele não sair da tela
+    #Limitar movimentação do player pra ele não sair da tela
     playerX += playerXalteracao
     if playerX >= 745:
         playerX = 745
