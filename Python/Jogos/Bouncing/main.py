@@ -37,11 +37,12 @@ cores = {
     "verdeagua": pygame.image.load('Assets/verdeagua.png'),
     "verdeclaro": pygame.image.load('Assets/verdeclaro.png'),
     "verdeescuro": pygame.image.load('Assets/verdeescuro.png'),
-    "vermelho": pygame.image.load('Assets/vermelho.png')
+    "vermelho": pygame.image.load('Assets/vermelho.png'),
+    "kurisu": pygame.transform.scale(pygame.image.load('Assets/chibi.jpg'), (100, 100))
 }
 
 # Cubo
-quantidadeCubos = 1
+quantidadeCubos = 200
 cubos = []
 
 # Numeros acessórios de Cubo
@@ -51,6 +52,12 @@ INDEX_ULTIMA_TECLA = INDEX_PRIMEIRA_TECLA + 9
 # Posição do Player
 def player(cuboAtual, x, y):
     screen.blit(cores[cubos[cuboAtual]["cuboCor"]], (x, y))
+
+def render_text(what):
+        # Renderiza texto na tela
+        font = pygame.font.Font('Assets/RobotoMono-Bold.ttf', 20)
+        text = font.render(what, True, (255, 255, 255))
+        screen.blit(text, (10, 10))
 
 # Adiciona Mais cubos
 def adicionaCubos(qtdCubos):
@@ -87,7 +94,7 @@ def alteraCorCubo(cuboAtual):
     cor = cubos[cuboAtual]["corAnterior"]
 
     while cubos[cuboAtual]["corAnterior"] == cor:
-        cor = random.randint(1, 11)
+        cor = random.randint(1, 12)
 
     cubos[cuboAtual]["cuboCor"] = list(cores.keys())[cor]
     cubos[cuboAtual]["corAnterior"] = cor
@@ -123,5 +130,6 @@ while running:
         cubos[i]["cuboY"] += cubos[i]["cuboYalteracao"]
 
         player(i ,cubos[i]["cuboX"], cubos[i]["cuboY"])
+        render_text(str(int(clock.get_fps())))
 
     pygame.display.update()
