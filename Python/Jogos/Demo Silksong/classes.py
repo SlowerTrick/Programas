@@ -44,8 +44,8 @@ class Player:
         # Aplicar gravidade
         if not self.on_ground:
             self.speed_y += GRAVITY
-            # Atualiza a posição vertical do jogador com base na sua velocidade
-            self.y += self.speed_y
+            
+        self.y += self.speed_y
 
         # Atualiza a posição da hitbox
         self.hit_box.topleft = (self.x, self.y)
@@ -129,20 +129,25 @@ class Game:
         self.player.update_position()
 
         # Verificação da colisão com as plataformas
+        self.player.on_ground = False
+        print (self.player.speed_y)
         for p in self.tile_list:
             if self.player.hit_box.colliderect(p):
-                # Jogador está caindo
-                if self.player.speed_y > 0:
+                if (self.player.speed_y > 0):
                     self.player.y = p.top - PLAYER_HEIGHT
-                    self.player.speed_y = 0
+                    self.player.speed_y = GRAVITY
                     self.player.on_ground = True
+                    break
+                if (self.player.speed_y < 0):
+                    self.player.y = p.bottom
+                    self.player.speed_y = GRAVITY
+                    self.player.on_ground = False
                     break
 
         # Atualiza a posição da hitbox após ajustar a posição do jogador
         self.player.hit_box.topleft = (self.player.x, self.player.y)
 
     def draw(self):
-        print(self.player.on_ground)
         # Desenha todos os elementos do jogo
         self.player.draw(self.screen)
         for p in self.tile_list:
