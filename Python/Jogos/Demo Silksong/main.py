@@ -23,10 +23,6 @@ pygame.display.set_icon(icon)
 FPS = 60
 clock = pygame.time.Clock()
 
-# Instancia o jogador e o jogo
-info = Info(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH_OFFSET, SCREEN_HEIGHT_OFFSET)
-GRID_WIDTH, GRID_HEIGHT = info.get_grid_dimensions()
-
 # Defina o mundo inicial de forma clara
 world_data = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -40,13 +36,14 @@ world_data = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ]
-
+# Instancia o Jogo
+info = Info(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH_OFFSET, SCREEN_HEIGHT_OFFSET)
 player = Player((SCREEN_WIDTH - SCREEN_WIDTH_OFFSET) / 2, SCREEN_HEIGHT - SCREEN_HEIGHT_OFFSET)
 game = Game(screen, player, info, world_data)
 
@@ -57,7 +54,7 @@ while running:
     screen.fill((0, 0, 0))  # Limpa a tela com a cor preta
 
     running = game.process_events()  # Processa os eventos
-    game.update()  # Atualiza o estado do jogo
+    game.player.update_collision(game.tile_list)  # Atualiza o estado do jogo
     game.draw()  # Desenha os elementos do jogo
     #game.draw_grid()
     

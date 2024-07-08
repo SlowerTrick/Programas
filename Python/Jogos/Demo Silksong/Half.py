@@ -47,7 +47,6 @@ class Player:
         self.hit_box.topleft = (self.x, self.y)
     
     def update_collision(self, tile_list):
-        print("x:", self.x ,"y:", self.y)
         # Atualiza a posição do jogador
         self.update_position()
 
@@ -72,17 +71,8 @@ class Player:
             if self.hit_box.colliderect(tile):
                 if self.speed_x > 0:  # Movendo-se para a direita
                     self.x = tile.left - PLAYER_WIDTH
-                    self.speed_x = 0
-                    self.hitting_wall = True
-                    break
-                if self.speed_x < 0:  # Movendo-se para a esquerda
+                elif self.speed_x < 0:  # Movendo-se para a esquerda
                     self.x = tile.right
-                    self.speed_x = 0
-                    self.hitting_wall = True
-                    break
-
-        # Atualiza a posição da hitbox após ajustar a posição do jogador
-        self.hit_box.topleft = (self.x, self.y)
 
     def update_speed(self, keys):
         # Atualiza a velocidade do jogador com base nas entradas do teclado
@@ -161,10 +151,10 @@ class Game:
     def draw(self):
         # Desenha todos os elementos do jogo
         self.player.draw(self.screen)
-        pygame.draw.rect(self.screen, (255, 0, 0), self.player.hit_box, 2) # HitBox Player
+        # pygame.draw.rect(self.screen, (255, 0, 0), self.player.hit_box, 2) "HitBox Player"
         for p in self.tile_list:
             pygame.draw.rect(self.screen, (255, 255, 255), p)
-            pygame.draw.rect(self.screen, (255, 0, 0), p, 2) # HitBox plataformas
+            # pygame.draw.rect(self.screen, (255, 0, 0), p, 2) "HitBox plataformas"
     
     def draw_grid(self):
         for line in range(self.info.GRID_HEIGHT + 1):
