@@ -6,6 +6,7 @@ PLAYER_HEIGHT = 80
 JUMP_SPEED = -14
 MOVE_SPEED = 4
 GRAVITY = 0.5
+ACCELERATION = 0.1
 
 # Armazena diversas informações para o melhor funcionamento do jogo
 class Info:
@@ -25,78 +26,81 @@ class Player:
         self.y = initialPosY - 300
         self.speed_x = 0
         self.speed_y = 0
-        self.hit_box = pygame.Rect(self.x, self.y, PLAYER_WIDTH, PLAYER_HEIGHT)
         self.on_ground = False
-        self.hitting_wall = False
+        self.hit_box = pygame.Rect(self.x, self.y, PLAYER_WIDTH, PLAYER_HEIGHT)
         # Carrega e redimensiona a imagem do jogador
         self.playerImg = pygame.image.load('Assets/Hornet/chibi.jpg')
         self.playerImg = pygame.transform.scale(self.playerImg, (PLAYER_WIDTH, PLAYER_HEIGHT))
+
+    def update_position(self, tile_list, keys):
+
+        # Gravidade e Aceleração do jogador
+        self.speed_y += GRAVITY
+        if keys['right']:
+            self.speed_x += ACCELERATION
+        elif keys['left']:
+            self.speed_x -= ACCELERATION
+        else:
+            if self.speed_x != 0 and self.speed_x > 0:
+                self.speed_x -= 0.25
+            if self.speed_x != 0 and self.speed_x < 0:
+                self.speed_x += 0.25  
+
+        if self.speed_x > 7:
+            self.speed_x = 7
+        elif self.speed_x < -7:
+            self.speed_x = -7   
+        elif -0.25 < self.speed_x < 0.25:
+            self.speed_x = 0
+
+        # Verificação das colisões
+        new_player_x = self.x
+        new_player_x += self.speed_x
+        new_player_y = self.y
+        new_player_rect = pygame.Rect(new_player_x, new_player_y, PLAYER_WIDTH, PLAYER_HEIGHT)
+
+        x_collision = False
+        for tile in tile_list:
+            if tile.colliderect(new_player_rect):
+                x_collision = True
+                break
         
-    def update_position(self):
-        # Atualiza a posição horizontal do jogador com base na sua velocidade
-        if not self.hitting_wall:
-            self.x += self.speed_x
-
-        # Aplicar gravidade
-        if not self.on_ground:
-            self.speed_y += GRAVITY
-            
-        self.y += self.speed_y
-
-        # Atualiza a posição da hitbox
-        self.hit_box.topleft = (self.x, self.y)
-    
-    def update_collision(self, tile_list):
-        print("x:", self.x ,"y:", self.y)
-        # Atualiza a posição do jogador
-        self.update_position()
-
-        # Verificação da colisão com as plataformas
+        if not x_collision:
+            self.x = new_player_x
+            self.hit_box = pygame.Rect(self.x, self.y, PLAYER_WIDTH, PLAYER_HEIGHT)
+        
         self.on_ground = False
+        new_player_x = self.x
+        new_player_x += self.speed_x
+        new_player_y = self.y
+        new_player_y += self.speed_y
+        new_player_rect = pygame.Rect(new_player_x, new_player_y, PLAYER_WIDTH, PLAYER_HEIGHT)
+        
+        y_collision = False
         for tile in tile_list:
-            if self.hit_box.colliderect(tile):
-                if self.speed_y > 0:
-                    self.y = tile.top - PLAYER_HEIGHT
-                    self.speed_y = GRAVITY
-                    self.on_ground = True
-                    
-                if self.speed_y < 0:
-                    self.y = tile.bottom
-                    self.speed_y = GRAVITY
-                    break
-
-        # Atualiza a posição da hitbox após ajustar a posição do jogador
-        self.hit_box.topleft = (self.x, self.y)
-
-        for tile in tile_list:
-            if self.hit_box.colliderect(tile):
-                if self.speed_x > 0:  # Movendo-se para a direita
-                    self.x = tile.left - PLAYER_WIDTH
-                    self.speed_x = 0
-                    self.hitting_wall = True
-                    break
-                if self.speed_x < 0:  # Movendo-se para a esquerda
-                    self.x = tile.right
-                    self.speed_x = 0
-                    self.hitting_wall = True
-                    break
-
-        # Atualiza a posição da hitbox após ajustar a posição do jogador
-        self.hit_box.topleft = (self.x, self.y)
-
+            if tile.colliderect(new_player_rect):
+                # Faz o player sempre ficar imediatamente a cima da plataforma
+                if tile[1] > new_player_y:
+                    self.y = tile[1] - PLAYER_HEIGHT
+                y_collision = True
+                self.speed_y = GRAVITY
+                self.on_ground = True
+                break
+        
+        if not y_collision:
+            self.y = new_player_y
+            self.hit_box = pygame.Rect(self.x, self.y, PLAYER_WIDTH, PLAYER_HEIGHT)
+    
     def update_speed(self, keys):
         # Atualiza a velocidade do jogador com base nas entradas do teclado
         if keys['right']:
             self.speed_x = MOVE_SPEED
         elif keys['left']:
             self.speed_x = -MOVE_SPEED
-        else:
-            self.speed_x = 0
 
         # Verificação do pulo do jogador
         if keys['jump'] and self.on_ground:
             self.speed_y = JUMP_SPEED
-            self.on_ground = False
             keys['jump'] = False
 
     def draw(self, screen):
@@ -161,10 +165,10 @@ class Game:
     def draw(self):
         # Desenha todos os elementos do jogo
         self.player.draw(self.screen)
-        pygame.draw.rect(self.screen, (255, 0, 0), self.player.hit_box, 2) # HitBox Player
+        # pygame.draw.rect(self.screen, (255, 0, 0), self.player.hit_box, 2) # HitBox Player
         for p in self.tile_list:
             pygame.draw.rect(self.screen, (255, 255, 255), p)
-            pygame.draw.rect(self.screen, (255, 0, 0), p, 2) # HitBox plataformas
+            # pygame.draw.rect(self.screen, (255, 0, 0), p, 2) # HitBox plataformas
     
     def draw_grid(self):
         for line in range(self.info.GRID_HEIGHT + 1):

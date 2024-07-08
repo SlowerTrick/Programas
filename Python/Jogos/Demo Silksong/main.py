@@ -54,7 +54,7 @@ while running:
     screen.fill((0, 0, 0))  # Limpa a tela com a cor preta
 
     running = game.process_events()  # Processa os eventos
-    game.player.update_collision(game.tile_list)  # Atualiza o estado do jogo
+    game.player.update_position(game.tile_list, game.keys)
     game.draw()  # Desenha os elementos do jogo
     #game.draw_grid()
     
