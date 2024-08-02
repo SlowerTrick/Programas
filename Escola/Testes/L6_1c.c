@@ -10,6 +10,13 @@ typedef struct
 } 
 tPacote;
 
+typedef struct 
+{
+    tPacote pacotes[100];
+    int quantidade;
+} 
+tMensagem;
+
 tPacote LePacote();
 void ImprimePacote(tPacote pacote);
 int EhValido(tPacote pacote);
