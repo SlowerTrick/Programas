@@ -5,11 +5,12 @@
     "breadcrumbs.enabled": false,
     "editor.minimap.enabled": false,
     "editor.scrollbar.horizontal": "hidden",
-    "editor.scrollbar.vertical": "hidden",
     "explorer.compactFolders": false,
     "files.associations": {
         "stdio.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "matriz.h": "c",
+        "string.h": "c"
     },
 }
 
